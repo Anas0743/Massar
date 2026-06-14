@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color: #111114;
-  background: #fffdf8;
+  color: #07111f;
+  background: #f7fafc;
   font-family:
     "Tajawal", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-synthesis: none;
@@ -22,8 +22,10 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    linear-gradient(180deg, rgba(184, 230, 216, 0.22), rgba(255, 253, 248, 0) 320px),
-    #fffdf8;
+    linear-gradient(115deg, rgba(85, 214, 194, 0.13), transparent 34%),
+    linear-gradient(245deg, rgba(184, 167, 255, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(247, 250, 252, 0.92), #f7fafc 320px),
+    #f7fafc;
 }
 
 button,
@@ -35,32 +37,36 @@ select {
 
 ::selection {
   color: white;
-  background: #2fa891;
+  background: #21a992;
 }
 
 .masar-grain {
   background-image:
-    linear-gradient(rgba(17, 17, 20, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 17, 20, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(7, 17, 31, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7, 17, 31, 0.035) 1px, transparent 1px);
   background-size: 26px 26px;
 }
 
 .masar-gradient {
-  background: linear-gradient(105deg, #167a6d 0%, #2563eb 52%, #6d5dfc 100%);
+  background: linear-gradient(105deg, #21a992 0%, #5b7cfa 52%, #b8a7ff 100%);
 }
 
 .masar-progress {
-  background: linear-gradient(90deg, #d8f3ea 0%, #2fa891 36%, #2563eb 68%, #6d5dfc 100%);
+  background: linear-gradient(90deg, #55d6c2 0%, #7eddf1 38%, #5b7cfa 70%, #b8a7ff 100%);
 }
 
 .masar-grid {
   background-image:
-    linear-gradient(rgba(17, 17, 20, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 17, 20, 0.045) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(47, 168, 145, 0.13), rgba(109, 93, 252, 0.08));
+    linear-gradient(rgba(7, 17, 31, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7, 17, 31, 0.04) 1px, transparent 1px),
+    linear-gradient(120deg, rgba(85, 214, 194, 0.16), transparent 46%),
+    linear-gradient(245deg, rgba(184, 167, 255, 0.14), transparent 44%),
+    linear-gradient(135deg, rgba(126, 221, 241, 0.08), rgba(247, 250, 252, 0.9));
   background-size:
     44px 44px,
     44px 44px,
+    100% 100%,
+    100% 100%,
     100% 100%;
 }
 
@@ -69,4 +75,101 @@ select {
     linear-gradient(120deg, transparent 0 16%, rgba(255, 255, 255, 0.12) 16% 16.35%, transparent 16.35% 100%),
     linear-gradient(120deg, transparent 0 58%, rgba(47, 168, 145, 0.18) 58% 58.35%, transparent 58.35% 100%);
   background-size: 100% 100%;
+}
+
+.masar-page-shell {
+  background:
+    linear-gradient(115deg, rgba(85, 214, 194, 0.16), transparent 42%),
+    linear-gradient(245deg, rgba(184, 167, 255, 0.16), transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 250, 252, 0.92));
+}
+
+.masar-glass {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 22px 70px rgba(7, 17, 31, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(22px);
+}
+
+.masar-dark-panel {
+  background:
+    linear-gradient(120deg, rgba(91, 124, 250, 0.3), transparent 42%),
+    linear-gradient(245deg, rgba(85, 214, 194, 0.22), transparent 38%),
+    linear-gradient(135deg, #07111f 0%, #0b1728 55%, #111a35 100%);
+}
+
+.masar-soft-panel {
+  background:
+    linear-gradient(115deg, rgba(85, 214, 194, 0.18), transparent 46%),
+    linear-gradient(245deg, rgba(184, 167, 255, 0.17), transparent 44%),
+    rgba(255, 255, 255, 0.86);
+}
+
+.masar-heading-gradient {
+  background: linear-gradient(100deg, #21a992 0%, #5b7cfa 58%, #b8a7ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.masar-mentor-marquee {
+  animation: masar-mentor-scroll 28s linear infinite;
+}
+
+.masar-cv-float {
+  animation: masar-cv-float 6.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.masar-cv-float-fast {
+  animation-duration: 5.4s;
+}
+
+.masar-cv-float-late {
+  animation-delay: -2.2s;
+}
+
+.masar-cv-paper {
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.masar-cv-stage:hover .masar-cv-paper {
+  box-shadow: 0 30px 80px rgba(7, 17, 31, 0.18);
+}
+
+.masar-cv-stage:hover .masar-cv-paper-back {
+  transform: rotate(-8deg) translateY(-8px) translateX(-6px);
+}
+
+.masar-cv-stage:hover .masar-cv-paper-main {
+  transform: rotate(1deg) translateY(-14px) translateX(6px) scale(1.02);
+}
+
+.masar-cv-stage:hover .masar-cv-paper-check {
+  transform: rotate(3deg) translateY(8px);
+}
+
+@keyframes masar-mentor-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes masar-cv-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
 }

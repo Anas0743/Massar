@@ -4,9 +4,9 @@ import { cn } from "../../lib/utils"
 
 const variants = {
   primary:
-    "masar-gradient text-white shadow-sm shadow-primary-600/20 hover:brightness-95 hover:shadow-md hover:shadow-primary-600/25 focus:ring-primary-200",
+    "masar-gradient text-white shadow-sm shadow-primary-600/20 hover:-translate-y-0.5 hover:brightness-[0.98] hover:shadow-md hover:shadow-primary-600/25 focus:ring-primary-200",
   secondary:
-    "bg-white/90 text-ink ring-1 ring-black/10 shadow-sm hover:bg-white hover:ring-black/15 focus:ring-primary-100",
+    "bg-white/90 text-ink ring-1 ring-black/10 shadow-sm hover:-translate-y-0.5 hover:bg-white hover:ring-black/15 focus:ring-primary-100",
   ghost: "bg-transparent text-slate-700 hover:bg-black/[0.04] hover:text-ink focus:ring-primary-100",
   danger: "bg-rose-600 text-white shadow-sm shadow-rose-600/20 hover:bg-rose-700 focus:ring-rose-200",
   success: "bg-primary-700 text-white shadow-sm shadow-primary-700/20 hover:bg-primary-600 focus:ring-primary-200",
