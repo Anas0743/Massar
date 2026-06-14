@@ -231,41 +231,6 @@ const heroProductTabs = [
   },
 ]
 
-function HomeSection({
-  eyebrow,
-  title,
-  description,
-  align = "center",
-  invert = false,
-}: {
-  eyebrow: string
-  title: string
-  description?: string
-  align?: "center" | "start"
-  invert?: boolean
-}) {
-  const wrapper = align === "center" ? "mx-auto mb-11 max-w-3xl text-center" : "mb-11 max-w-3xl"
-
-  return (
-    <div className={wrapper}>
-      <p
-        className={
-          invert
-            ? "inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-sm font-black text-primary-50"
-            : "inline-flex rounded-full border border-black/10 bg-white/88 px-4 py-1.5 text-sm font-black text-primary-700 shadow-sm backdrop-blur"
-        }
-      >
-        {eyebrow}
-      </p>
-      <h2 className={invert ? "mt-4 text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl" : "mt-4 text-3xl font-black leading-tight text-ink sm:text-4xl lg:text-5xl"}>
-        {title}
-      </h2>
-      <div className={align === "center" ? "masar-progress mx-auto mt-5 h-1.5 w-24 rounded-full" : "masar-progress mt-5 h-1.5 w-24 rounded-full"} />
-      {description ? <p className={invert ? "mt-5 text-sm leading-8 text-white/70 sm:text-base" : "mt-5 text-sm leading-8 text-slate-600 sm:text-base"}>{description}</p> : null}
-    </div>
-  )
-}
-
 function HeroProductPanel() {
   const [activeTab, setActiveTab] = useState(0)
   const active = heroProductTabs[activeTab]
@@ -624,46 +589,78 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="bg-paper py-16">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.84fr_1.16fr] lg:items-start lg:px-8">
-          <div>
-            <HomeSection
-              align="start"
-              eyebrow="ابدأ من المجال"
-              title="مسارات تقنية واضحة بدل قائمة خيارات مربكة"
-              description="كل مسار يوجه الطالب إلى خبراء مناسبين وجلسات أقرب لسؤاله الحالي."
-            />
-            <ButtonLink to="/tracks" variant="secondary" size="lg">
-              عرض كل المجالات
-              <ArrowLeft className="h-5 w-5" />
-            </ButtonLink>
-          </div>
+      <section className="relative overflow-hidden bg-white py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_28%,rgba(126,221,241,0.16),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(184,167,255,0.14),transparent_32%)]" />
+        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
+          <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+            <div className="rounded-3xl border border-black/10 bg-white/86 p-7 shadow-soft backdrop-blur lg:sticky lg:top-28">
+              <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-paper px-4 py-2 text-sm font-black text-slate-700">
+                <Route className="h-4 w-4 text-primary-700" />
+                ابدأ من المجال
+              </p>
+              <h2 className="mt-6 text-4xl font-black leading-tight text-ink sm:text-5xl">
+                مسارات تقنية
+                <span className="masar-heading-gradient block pb-1">تختصر عليك الحيرة</span>
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-600">
+                اختر المجال الذي تفكر به، وسنوصلك إلى خبراء مناسبين وجلسات أقرب لسؤالك الحالي بدل التشتت بين خيارات كثيرة.
+              </p>
 
-          {tracks.isLoading ? (
-            <LoadingState />
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {tracks.data?.slice(0, 8).map((track, index) => {
-                const Icon = trackIcons[index % trackIcons.length]
-                return (
-                  <Link
-                    key={track.id}
-                    to={`/experts?track=${track.slug}`}
-                    className="group rounded-md border border-black/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary-200 hover:shadow-float"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <span className="grid h-11 w-11 place-items-center rounded-md bg-primary-50 text-primary-700 ring-1 ring-primary-100">
-                        <Icon className="h-5 w-5" />
-                      </span>
-                      <ArrowLeft className="h-5 w-5 text-slate-300 transition group-hover:-translate-x-1 group-hover:text-primary-700" />
-                    </div>
-                    <h3 className="mt-5 font-black text-ink">{track.name}</h3>
-                    <p className="mt-2 line-clamp-3 text-sm leading-7 text-slate-600">{track.description}</p>
-                  </Link>
-                )
-              })}
+              <div className="mt-7 grid gap-3">
+                {[
+                  "تصفية الخبراء حسب المجال.",
+                  "فهم نوع الجلسة الأنسب لكل مسار.",
+                  "بدء الحجز من نقطة واضحة.",
+                ].map((item) => (
+                  <div key={item} className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-paper/80 px-4 py-3 text-sm font-bold text-slate-700">
+                    <span>{item}</span>
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary-700" />
+                  </div>
+                ))}
+              </div>
+
+              <ButtonLink to="/tracks" variant="secondary" size="lg" className="mt-8 h-14 w-full bg-white">
+                عرض كل المجالات
+                <ArrowLeft className="h-5 w-5" />
+              </ButtonLink>
             </div>
-          )}
+
+            {tracks.isLoading ? (
+              <LoadingState />
+            ) : tracks.isError ? (
+              <div className="rounded-3xl border border-black/10 bg-white p-8 text-center text-sm font-bold text-slate-500 shadow-soft">
+                تعذر تحميل المجالات الآن.
+              </div>
+            ) : tracks.data?.length ? (
+              <div className="grid gap-5 sm:grid-cols-2">
+                {tracks.data.slice(0, 8).map((track, index) => {
+                  const Icon = trackIcons[index % trackIcons.length]
+                  return (
+                    <Link
+                      key={track.id}
+                      to={`/experts?track=${track.slug}`}
+                      className="group relative min-h-[220px] overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-6 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/35 hover:shadow-float"
+                    >
+                      <div className="absolute inset-x-6 top-0 h-1 rounded-b-full bg-gradient-to-l from-primary-500 via-aqua to-violetTech opacity-0 transition group-hover:opacity-100" />
+                      <div className="absolute -left-16 -bottom-16 h-40 w-40 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/16" />
+                      <div className="relative flex items-start justify-between gap-4">
+                        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:bg-primary-50">
+                          <Icon className="h-6 w-6" />
+                        </span>
+                        <span className="grid h-10 w-10 place-items-center rounded-full bg-white text-slate-400 shadow-sm ring-1 ring-black/10 transition group-hover:-translate-x-1 group-hover:bg-ink group-hover:text-white">
+                          <ArrowLeft className="h-4 w-4" />
+                        </span>
+                      </div>
+                      <h3 className="relative mt-7 text-xl font-black text-ink transition group-hover:text-primary-700">{track.name}</h3>
+                      <p className="relative mt-3 line-clamp-3 text-sm leading-8 text-slate-600">{track.description}</p>
+                    </Link>
+                  )
+                })}
+              </div>
+            ) : (
+              <EmptyState title="لا توجد مجالات بعد" description="يمكن إضافة المجالات من لوحة الإدارة." />
+            )}
+          </div>
         </div>
       </section>
 
@@ -723,26 +720,53 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <HomeSection
-            eyebrow="منتجات مسار"
-            title="كل ما يحتاجه الطالب ليتحرك من الحيرة إلى التنفيذ"
-            description="جلسات واضحة، خبراء مناسبون، ومخرجات قابلة للتطبيق بعد انتهاء الجلسة."
-          />
+      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7fafc_100%)] py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_76%,rgba(85,214,194,0.15),transparent_28%),radial-gradient(circle_at_86%_22%,rgba(246,167,201,0.12),transparent_30%)]" />
+        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
+                <Sparkles className="h-4 w-4 text-primary-600" />
+                منتجات مسار
+              </p>
+              <h2 className="mt-7 text-4xl font-black leading-[1.2] text-ink sm:text-5xl">
+                خدمات واضحة
+                <span className="masar-heading-gradient block pb-1">تنتهي بخطوة قابلة للتنفيذ</span>
+              </h2>
+            </div>
+            <p className="max-w-xl text-base leading-8 text-slate-600 lg:justify-self-end">
+              جلسات واضحة، خبراء مناسبون، ومخرجات قابلة للتطبيق بعد انتهاء الجلسة. كل منتج داخل مسار مصمم ليقلل الحيرة ويزيد وضوح الخطوة القادمة.
+            </p>
+          </div>
 
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {platformProducts.map((product, index) => (
-              <article key={product.title} className="group relative overflow-hidden rounded-md border border-black/10 bg-paper p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-float">
-                <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#07111f,#55d6c2,#5b7cfa,#b8a7ff)]" />
-                <div className="flex items-start justify-between gap-5">
-                  <span className="grid h-12 w-12 place-items-center rounded-md bg-white text-primary-700 ring-1 ring-black/10">
-                    <product.icon className="h-6 w-6" />
+              <article
+                key={product.title}
+                className="group relative min-h-[360px] overflow-hidden rounded-3xl border border-black/10 bg-white/86 p-7 shadow-soft backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/35 hover:shadow-float"
+              >
+                <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#55d6c2,#7eddf1,#b8a7ff,#f6a7c9)]" />
+                <div className="absolute -left-20 -bottom-20 h-52 w-52 rounded-full bg-aqua/16 blur-3xl transition group-hover:bg-aqua/24" />
+                <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-violetTech/16 blur-3xl transition group-hover:bg-violetTech/24" />
+
+                <div className="relative flex items-start justify-between gap-5">
+                  <span className="grid h-16 w-16 place-items-center rounded-3xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:bg-primary-50">
+                    <product.icon className="h-8 w-8" />
                   </span>
-                  <span className="text-sm font-black text-slate-300">0{index + 1}</span>
+                  <span className="rounded-full bg-paper px-3 py-1.5 text-xs font-black text-slate-500 ring-1 ring-black/10">0{index + 1}</span>
                 </div>
-                <h3 className="mt-6 text-xl font-black text-ink">{product.title}</h3>
-                <p className="mt-3 text-sm leading-8 text-slate-600">{product.description}</p>
+
+                <div className="relative mt-10">
+                  <h3 className="text-2xl font-black leading-9 text-ink transition group-hover:text-primary-700">{product.title}</h3>
+                  <p className="mt-4 text-sm leading-8 text-slate-600">{product.description}</p>
+                </div>
+
+                <div className="relative mt-8 border-t border-black/10 pt-5">
+                  <Link to={index === 0 ? "/experts" : index === 1 ? "/sessions" : "/tracks"} className="inline-flex items-center gap-2 text-sm font-black text-primary-700 transition group-hover:-translate-x-1">
+                    ابدأ من هنا
+                    <ArrowLeft className="h-4 w-4" />
+                  </Link>
+                </div>
               </article>
             ))}
           </div>
@@ -1092,18 +1116,38 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="bg-paper py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <HomeSection eyebrow="آراء الطلاب" title="ما الذي يتغير بعد جلسة واضحة؟" />
-          <div className="grid gap-5 lg:grid-cols-3">
-            {testimonials.map((story) => (
-              <article key={story.name} className="rounded-md border border-black/10 bg-white p-6 shadow-sm">
-                <Quote className="h-8 w-8 text-primary-600" />
-                <p className="mt-5 min-h-28 text-sm leading-8 text-slate-700">{story.quote}</p>
-                <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
+      <section className="relative overflow-hidden bg-paper py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(184,167,255,0.16),transparent_28%),radial-gradient(circle_at_86%_72%,rgba(85,214,194,0.13),transparent_30%)]" />
+        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
+              <Quote className="h-4 w-4 text-primary-600" />
+              آراء الطلاب
+            </p>
+            <h2 className="mt-7 text-4xl font-black leading-[1.2] text-ink sm:text-5xl">ما الذي يتغير بعد جلسة واضحة؟</h2>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600">
+              شهادات قصيرة توضّح الفرق بين نصائح عامة وجلسة تنتهي بخطة قابلة للتطبيق.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+            {testimonials.map((story, index) => (
+              <article
+                key={story.name}
+                className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white/88 p-7 shadow-soft backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/30 hover:shadow-float"
+              >
+                <div className="absolute -left-14 -top-14 h-36 w-36 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/16" />
+                <div className="relative flex items-start justify-between gap-4">
+                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10">
+                    <Quote className="h-6 w-6" />
+                  </span>
+                  <span className="text-xs font-black text-slate-300">0{index + 1}</span>
+                </div>
+                <p className="relative mt-7 min-h-36 text-sm font-medium leading-8 text-slate-700">{story.quote}</p>
+                <div className="relative mt-7 flex items-center justify-between gap-4 border-t border-black/10 pt-5">
                   <div>
                     <h3 className="font-black text-ink">{story.name}</h3>
-                    <p className="text-xs font-bold text-slate-500">{story.meta}</p>
+                    <p className="mt-1 text-xs font-bold text-slate-500">{story.meta}</p>
                   </div>
                   <div className="flex text-sun" aria-label="تقييم خمسة نجوم">
                     {[1, 2, 3, 4, 5].map((star) => (
