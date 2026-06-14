@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #111114;
+  background: #fffdf8;
+  font-family:
+    "Tajawal", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(184, 230, 216, 0.22), rgba(255, 253, 248, 0) 320px),
+    #fffdf8;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  color: white;
+  background: #2fa891;
+}
+
+.masar-grain {
+  background-image:
+    linear-gradient(rgba(17, 17, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 20, 0.035) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.masar-gradient {
+  background: linear-gradient(105deg, #83d2c2 0%, #aeb7ff 56%, #f49bb6 100%);
+}
+
+.masar-progress {
+  background: linear-gradient(90deg, #d8f3ea 0%, #83d2c2 45%, #aeb7ff 72%, #f49bb6 100%);
+}

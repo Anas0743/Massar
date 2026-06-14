@@ -1,0 +1,59 @@
+name: masar
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: masar-db
+    environment:
+      POSTGRES_USER: masar
+      POSTGRES_PASSWORD: masar_password
+      POSTGRES_DB: masar
+    ports:
+      - "5433:5432"
+    volumes:
+      - masar_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U masar -d masar"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: masar-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://masar:masar_password@db:5432/masar
+      SECRET_KEY: change-this-secret-in-production
+      ACCESS_TOKEN_EXPIRE_MINUTES: 10080
+      BACKEND_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             python -m app.seed &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend:
+    image: node:22-alpine
+    container_name: masar-frontend
+    working_dir: /app
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  masar_postgres_data:
+  frontend_node_modules:

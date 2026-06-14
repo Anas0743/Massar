@@ -1,0 +1,16 @@
+from app.models.entities import (  # noqa: F401
+    Availability,
+    Booking,
+    ContactMessage,
+    ExpertProfile,
+    FAQ,
+    Payment,
+    Review,
+    SessionNote,
+    SessionType,
+    StudentProfile,
+    Track,
+    User,
+    expert_session_types,
+    expert_tracks,
+)
