@@ -31,11 +31,12 @@ export function PublicLayout() {
         <NavLink
           key={item.to}
           to={item.to}
+          end={item.to === "/"}
           onClick={() => setOpen(false)}
           className={({ isActive }) =>
             cn(
-              "rounded-full px-3 py-2 text-sm font-bold text-slate-600 transition hover:bg-black/[0.04] hover:text-primary-700",
-              isActive && "bg-primary-50 text-primary-700 ring-1 ring-primary-100",
+              "rounded-full px-3 py-2 text-sm font-black text-slate-800 transition hover:bg-primary-50 hover:text-primary-700",
+              isActive && "bg-ink text-white shadow-sm ring-1 ring-black/10 hover:bg-ink hover:text-white",
             )
           }
         >
@@ -48,7 +49,7 @@ export function PublicLayout() {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <header className="sticky top-3 z-40 px-3">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full border border-black/10 bg-white/88 px-4 py-3 shadow-float backdrop-blur-xl sm:px-5 lg:px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full border border-white/80 bg-white/[0.97] px-4 py-3 shadow-[0_18px_55px_rgba(17,17,20,0.22)] ring-1 ring-black/[0.04] backdrop-blur-2xl sm:px-5 lg:px-6">
           <Link to="/" className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-lg font-black text-white shadow-md shadow-black/15">
               م

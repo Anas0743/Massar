@@ -41,10 +41,40 @@ type IconItem = {
   icon: LucideIcon
 }
 
-const heroStats = [
-  { value: "8", label: "مسارات تقنية" },
-  { value: "7+", label: "خبراء متخصصون" },
-  { value: "30 يوم", label: "خطة بعد الجلسة" },
+type ActionItem = IconItem & {
+  action: string
+  to: string
+}
+
+const quickIntents: ActionItem[] = [
+  {
+    title: "محتار في المسار",
+    description: "ابدأ بجلسة تحديد المسار",
+    action: "اختيار المسار",
+    to: "/sessions",
+    icon: Compass,
+  },
+  {
+    title: "جاهزية التقديم",
+    description: "CV وLinkedIn وGitHub",
+    action: "مراجعة الملف",
+    to: "/sessions",
+    icon: ClipboardCheck,
+  },
+  {
+    title: "مقابلة تدريب",
+    description: "محاكاة وأسئلة وتقييم",
+    action: "تجهيز مقابلة",
+    to: "/experts?track=career",
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: "مشروع تخرج",
+    description: "فكرة وخطة تنفيذ تقنية",
+    action: "توجيه المشروع",
+    to: "/sessions",
+    icon: GraduationCap,
+  },
 ]
 
 const steps: IconItem[] = [
@@ -91,6 +121,13 @@ const reasons: IconItem[] = [
 ]
 
 const trackIcons = [BrainCircuit, Code2, BriefcaseBusiness, Layers3, ShieldCheck, Route, Zap, Sparkles]
+
+const sessionOutcomeRows = [
+  { label: "ملخص الجلسة", value: "أين أنت الآن؟ وما القرار الذي اتفقتم عليه؟", icon: FileText },
+  { label: "نقاط القوة", value: "المهارات الجيدة التي يمكن البناء عليها فورًا.", icon: CheckCircle2 },
+  { label: "نقاط التحسين", value: "أولويات واضحة بدل قائمة طويلة من النصائح.", icon: Target },
+  { label: "خطة 30 يوم", value: "مهام أسبوعية، مصادر، ومخرج قابل للعرض.", icon: CalendarCheck2 },
+]
 
 const testimonials = [
   {
@@ -176,14 +213,35 @@ export function HomePage() {
               </ButtonLink>
             </div>
 
-            <div className="mt-12 grid max-w-3xl gap-3 sm:grid-cols-3">
-              {heroStats.map((stat) => (
-                <div key={stat.label} className="rounded-md border border-white/18 bg-white/12 p-4 shadow-soft backdrop-blur">
-                  <span className="block text-3xl font-black text-white">{stat.value}</span>
-                  <span className="mt-1 block text-sm font-bold text-white/72">{stat.label}</span>
-                </div>
-              ))}
+            <div className="mt-8 max-w-5xl rounded-md border border-white/16 bg-white/[0.08] p-3 shadow-soft backdrop-blur">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="px-2 text-sm font-black text-white">ابدأ من مشكلتك الحالية</p>
+                <Link to="/tracks" className="inline-flex items-center gap-2 px-2 text-sm font-black text-primary-50 transition hover:text-white">
+                  عرض كل المجالات
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
+                {quickIntents.map((intent) => (
+                  <Link
+                    key={intent.title}
+                    to={intent.to}
+                    className="group rounded-md border border-white/12 bg-white/[0.08] p-3 transition hover:-translate-y-0.5 hover:border-white/28 hover:bg-white/[0.13] sm:p-4"
+                  >
+                    <span className="grid h-8 w-8 place-items-center rounded-md bg-white text-ink sm:h-9 sm:w-9">
+                      <intent.icon className="h-4.5 w-4.5" />
+                    </span>
+                    <h3 className="mt-3 text-sm font-black text-white">{intent.title}</h3>
+                    <p className="mt-1 text-xs font-bold leading-6 text-white/62">{intent.description}</p>
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-black text-primary-50 transition group-hover:gap-2 group-hover:text-white">
+                      {intent.action}
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
+
           </div>
 
           <div className="mt-12 grid gap-3 text-sm font-bold text-white/78 sm:grid-cols-3 lg:max-w-4xl">
@@ -203,29 +261,39 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative bg-paper py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid overflow-hidden rounded-md border border-black/10 bg-white shadow-soft md:grid-cols-3">
-            {[
-              { value: trackCount, label: "مجالات تقنية جاهزة", icon: Route },
-              { value: expertCount, label: "خبير يمكن الحجز معه", icon: Users },
-              { value: sessionCount, label: "نوع جلسة للطالب", icon: Layers3 },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-4 border-b border-black/10 p-6 md:border-b-0 md:border-l">
-                <span className="grid h-12 w-12 place-items-center rounded-md bg-ink text-white">
-                  <item.icon className="h-6 w-6" />
-                </span>
-                <div>
-                  <span className="block text-3xl font-black text-ink">{item.value}</span>
-                  <span className="text-sm font-bold text-slate-500">{item.label}</span>
-                </div>
+      <section className="relative z-10 bg-paper pb-12">
+        <div className="mx-auto -mt-12 max-w-7xl px-4 sm:px-6 lg:-mt-16 lg:px-8">
+          <div className="overflow-hidden rounded-md border border-black/10 bg-white shadow-soft">
+            <div className="masar-progress h-1.5" />
+            <div className="grid gap-0 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+              <div className="border-b border-black/10 p-6 lg:border-b-0 lg:border-l">
+                <p className="text-sm font-black text-primary-700">Masar MVP</p>
+                <h2 className="mt-2 text-2xl font-black leading-tight text-ink">منصة حجز وإرشاد، لا صفحة تعريف فقط</h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  الطالب يرى المجال، الخبير، الجلسة، والحجز في تدفق واحد واضح.
+                </p>
               </div>
-            ))}
+              {[
+                { value: trackCount, label: "مجالات تقنية جاهزة", icon: Route },
+                { value: expertCount, label: "خبير يمكن الحجز معه", icon: Users },
+                { value: sessionCount, label: "نوع جلسة للطالب", icon: Layers3 },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-4 border-b border-black/10 p-6 last:border-b-0 lg:border-b-0 lg:border-l">
+                  <span className="grid h-12 w-12 place-items-center rounded-md bg-ink text-white">
+                    <item.icon className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <span className="block text-3xl font-black text-ink">{item.value}</span>
+                    <span className="text-sm font-bold text-slate-500">{item.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-paper py-16">
+      <section className="bg-paper pb-16 pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <HomeSection
             eyebrow="منتجات مسار"
@@ -239,7 +307,7 @@ export function HomePage() {
                 key={product.title}
                 className="group relative overflow-hidden rounded-md border border-black/10 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-float"
               >
-                <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#111114,#83d2c2,#f49bb6)]" />
+                <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#111114,#2fa891,#6d5dfc)]" />
                 <div className="flex items-start justify-between gap-5">
                   <span className="grid h-12 w-12 place-items-center rounded-md bg-paper text-primary-700 ring-1 ring-black/10">
                     <product.icon className="h-6 w-6" />
@@ -248,10 +316,12 @@ export function HomePage() {
                 </div>
                 <h3 className="mt-6 text-xl font-black text-ink">{product.title}</h3>
                 <p className="mt-3 text-sm leading-8 text-slate-600">{product.description}</p>
-                <Link to="/sessions" className="mt-6 inline-flex items-center gap-2 text-sm font-black text-primary-700 transition group-hover:gap-3">
-                  اعرف المزيد
-                  <ChevronLeft className="h-4 w-4" />
-                </Link>
+                <div className="mt-6 border-t border-black/10 pt-4">
+                  <Link to="/sessions" className="inline-flex items-center gap-2 text-sm font-black text-primary-700 transition group-hover:gap-3">
+                    اعرف المزيد
+                    <ChevronLeft className="h-4 w-4" />
+                  </Link>
+                </div>
               </article>
             ))}
           </div>
@@ -275,6 +345,68 @@ export function HomePage() {
                 <p className="mt-3 text-sm leading-7 text-slate-600">{step.description}</p>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-paper py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-8">
+          <div>
+            <HomeSection
+              align="start"
+              eyebrow="ماذا تستلم بعد الجلسة؟"
+              title="ليست جلسة كلام وانتهت، بل وثيقة تساعدك تتحرك بعدها"
+              description="بعد انتهاء الجلسة يستطيع الخبير رفع ملخص واضح داخل لوحة الطالب: ماذا ناقشتم، أين قوتك، ما الذي يحتاج تحسينًا، وما خطة الشهر القادم."
+            />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <ButtonLink to="/experts" size="lg">
+                احجز جلسة مع خبير
+                <ArrowLeft className="h-5 w-5" />
+              </ButtonLink>
+              <ButtonLink to="/sessions" variant="secondary" size="lg">
+                أنواع الجلسات
+              </ButtonLink>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-md border border-black/10 bg-white shadow-soft">
+            <div className="masar-progress h-1.5" />
+            <div className="p-6">
+              <div className="flex flex-col gap-4 border-b border-black/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-sm font-black text-primary-700">نموذج خطة طالب</p>
+                  <h3 className="mt-2 text-2xl font-black text-ink">خطة Frontend خلال 30 يوم</h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">
+                    مثال على شكل المخرجات التي تظهر للطالب داخل لوحة التحكم بعد الجلسة.
+                  </p>
+                </div>
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5 text-xs font-black text-primary-700 ring-1 ring-primary-100">
+                  <CheckCircle2 className="h-4 w-4" />
+                  مكتملة
+                </span>
+              </div>
+
+              <div className="divide-y divide-black/10">
+                {sessionOutcomeRows.map((row) => (
+                  <div key={row.label} className="grid gap-3 py-5 sm:grid-cols-[180px_1fr] sm:items-center">
+                    <div className="flex items-center gap-3">
+                      <span className="grid h-10 w-10 place-items-center rounded-md bg-paper text-ink ring-1 ring-black/10">
+                        <row.icon className="h-5 w-5" />
+                      </span>
+                      <span className="font-black text-ink">{row.label}</span>
+                    </div>
+                    <p className="text-sm leading-7 text-slate-600">{row.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="-mx-6 -mb-6 mt-2 bg-ink px-6 py-5 text-white">
+                <p className="text-sm font-black text-primary-500">الخطوة التالية</p>
+                <p className="mt-2 text-sm leading-7 text-white/78">
+                  ابن صفحة Portfolio صغيرة، ارفعها على GitHub، ثم احجز مراجعة ثانية خلال أسبوعين لقياس التحسن.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
