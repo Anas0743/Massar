@@ -52,3 +52,21 @@ select {
 .masar-progress {
   background: linear-gradient(90deg, #d8f3ea 0%, #83d2c2 45%, #aeb7ff 72%, #f49bb6 100%);
 }
+
+.masar-grid {
+  background-image:
+    linear-gradient(rgba(17, 17, 20, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 20, 0.045) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(131, 210, 194, 0.16), rgba(244, 155, 182, 0.08));
+  background-size:
+    44px 44px,
+    44px 44px,
+    100% 100%;
+}
+
+.masar-hero-lines {
+  background-image:
+    linear-gradient(120deg, transparent 0 16%, rgba(255, 255, 255, 0.12) 16% 16.35%, transparent 16.35% 100%),
+    linear-gradient(120deg, transparent 0 58%, rgba(131, 210, 194, 0.18) 58% 58.35%, transparent 58.35% 100%);
+  background-size: 100% 100%;
+}

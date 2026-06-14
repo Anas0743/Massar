@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { BadgeCheck, CalendarClock, Clock, Code2, ExternalLink, Star, UserRoundCheck, WalletCards } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -40,6 +40,7 @@ export function ExpertDetailsPage() {
       student_message: "",
     },
   })
+  const selectedSessionId = useWatch({ control: form.control, name: "session_type_id" })
 
   const createBooking = useMutation({
     mutationFn: (values: BookingForm) =>
@@ -84,7 +85,7 @@ export function ExpertDetailsPage() {
     )
   }
 
-  const selectedSession = expert.data.session_types.find((item) => item.id === Number(form.watch("session_type_id")))
+  const selectedSession = expert.data.session_types.find((item) => item.id === Number(selectedSessionId))
 
   return (
     <section className="masar-grain relative -mt-20 bg-paper pb-16 pt-28">

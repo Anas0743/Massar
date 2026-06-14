@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import { Toaster } from "sonner"
 import App from "./App.tsx"
-import { AuthProvider } from "./hooks/useAuth.tsx"
+import { AuthProvider } from "./providers/AuthProvider.tsx"
 import "./index.css"
 
 const queryClient = new QueryClient({

@@ -22,14 +22,15 @@ export function ExpertAvailabilityPage() {
 
   useEffect(() => {
     if (availability.data) {
-      setRows(
-        availability.data.map((item) => ({
-          day_of_week: item.day_of_week,
-          start_time: item.start_time.slice(0, 5),
-          end_time: item.end_time.slice(0, 5),
-          is_active: item.is_active,
-        })),
-      )
+      const nextRows = availability.data.map((item) => ({
+        day_of_week: item.day_of_week,
+        start_time: item.start_time.slice(0, 5),
+        end_time: item.end_time.slice(0, 5),
+        is_active: item.is_active,
+      }))
+      const timer = window.setTimeout(() => setRows(nextRows), 0)
+
+      return () => window.clearTimeout(timer)
     }
   }, [availability.data])
 

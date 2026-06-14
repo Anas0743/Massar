@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { LoadingState } from "../../components/LoadingState"
@@ -39,6 +39,8 @@ export function ExpertProfilePage() {
     resolver: zodResolver(profileSchema),
     defaultValues: { track_ids: [], session_type_ids: [], years_of_experience: "0", hourly_price: "0", session_duration_minutes: "45" },
   })
+  const selectedTrackIds = useWatch({ control: form.control, name: "track_ids" }) ?? []
+  const selectedSessionTypeIds = useWatch({ control: form.control, name: "session_type_ids" }) ?? []
 
   useEffect(() => {
     if (profile.data) {
@@ -144,7 +146,7 @@ export function ExpertProfilePage() {
           <h2 className="font-black">التخصصات</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {tracks.data?.map((track) => {
-              const selected = form.watch("track_ids").includes(track.id)
+              const selected = selectedTrackIds.includes(track.id)
               return (
                 <button
                   key={track.id}
@@ -162,7 +164,7 @@ export function ExpertProfilePage() {
           <h2 className="font-black">أنواع الجلسات</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {sessionTypes.data?.map((session) => {
-              const selected = form.watch("session_type_ids").includes(session.id)
+              const selected = selectedSessionTypeIds.includes(session.id)
               return (
                 <button
                   key={session.id}
