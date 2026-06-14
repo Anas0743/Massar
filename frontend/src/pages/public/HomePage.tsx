@@ -12,7 +12,6 @@ import {
   ClipboardCheck,
   Code2,
   Compass,
-  FileCheck2,
   FileText,
   GraduationCap,
   Layers3,
@@ -76,31 +75,6 @@ const quickIntents: ActionItem[] = [
     to: "/sessions",
     icon: GraduationCap,
   },
-]
-
-const platformProducts: IconItem[] = [
-  {
-    title: "جلسات إرشاد تقنية",
-    description: "اختر خبيرًا في المجال الذي تريد دخوله، ثم اخرج بقرار وخطة لا بروابط كثيرة.",
-    icon: MessageCircle,
-  },
-  {
-    title: "جاهزية التوظيف",
-    description: "تحسين السيرة، LinkedIn، GitHub، ومحاكاة مقابلات التدريب والـ Junior.",
-    icon: ClipboardCheck,
-  },
-  {
-    title: "خطة تعلم ومشروع",
-    description: "خطة 30 يوم ومشروع قابل للعرض حسب وقتك ومستواك الحالي.",
-    icon: BookOpenCheck,
-  },
-]
-
-const steps: IconItem[] = [
-  { title: "اختر المشكلة", description: "ابدأ من سؤال واضح بدل تعبئة نموذج طويل.", icon: Compass },
-  { title: "قارن الخبراء", description: "المجال، الخبرة، التقييم، السعر، ومدة الجلسة.", icon: Users },
-  { title: "احجز الموعد", description: "اختر نوع الجلسة والوقت واكتب رسالة قصيرة.", icon: CalendarCheck2 },
-  { title: "استلم الخطة", description: "ملخص، نقاط قوة وضعف، مصادر، وخطوة تالية.", icon: FileCheck2 },
 ]
 
 const trackIcons = [BrainCircuit, Code2, BriefcaseBusiness, Layers3, ShieldCheck, Route, Zap, Sparkles]
@@ -520,110 +494,56 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-white py-24">
-        <div className="masar-grid absolute inset-0 opacity-90" />
+      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_48%,#ffffff_100%)] py-24">
+        <div className="masar-grid absolute inset-0 opacity-70" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_26%,rgba(126,221,241,0.18),transparent_30%),radial-gradient(circle_at_90%_72%,rgba(184,167,255,0.16),transparent_34%)]" />
         <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-4 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
-              <Sparkles className="h-4 w-4 text-primary-600" />
-              احجز جلستك الإرشادية
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
+              <Route className="h-4 w-4 text-primary-700" />
+              ابدأ من المجال
             </p>
-            <h2 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-tight text-ink sm:text-5xl lg:text-6xl">
-              ابدأ رحلتك الإرشادية
-              <span className="masar-heading-gradient block pb-1">بالطريقة التي تناسبك</span>
+            <h2 className="mt-7 text-4xl font-black leading-[1.18] text-ink sm:text-5xl lg:text-6xl">
+              اختر مسارك التقني
+              <span className="masar-heading-gradient block pb-1">بدون ضياع بين الخيارات</span>
             </h2>
-            <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-              اختر بين جلسة مخصصة تبنيها حسب احتياجك، أو جلسة جاهزة تبدأ بها بسرعة مع خبير مناسب.
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+              ابدأ من المجال الأقرب لسؤالك، ثم انتقل مباشرة إلى خبراء وجلسات تناسب مستواك الحالي.
             </p>
           </div>
 
-          <div className="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-2">
-            <article className="relative rounded-3xl border-2 border-primary-500/35 bg-white/95 p-8 text-center shadow-[0_26px_80px_rgba(33,169,146,0.16)] transition hover:-translate-y-1 hover:shadow-float">
-              <span className="absolute -top-4 left-8 rounded-full bg-[linear-gradient(100deg,#55d6c2,#b8a7ff)] px-4 py-1.5 text-xs font-black text-ink shadow-sm">
-                موصى به
-              </span>
-              <span className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-primary-50 text-primary-700 ring-1 ring-primary-100">
-                <MessageCircle className="h-8 w-8" />
-              </span>
-              <h3 className="mt-7 text-2xl font-black text-ink">اصنع جلستك المخصصة</h3>
-              <p className="mx-auto mt-4 max-w-sm text-sm leading-8 text-slate-600">
-                اختر المشكلة التي تحتاجها، حدّد المجال والخبير المناسبين، واحصل على تجربة مصممة خصيصًا لك.
-              </p>
-              <ButtonLink to="/experts" size="lg" className="mt-8 h-14 w-full">
-                ابدأ الآن
-                <ArrowLeft className="h-5 w-5" />
-              </ButtonLink>
-            </article>
+          <div className="mt-14 grid gap-6 lg:grid-cols-[380px_1fr] lg:items-start">
+            <aside className="relative overflow-hidden rounded-3xl border border-white/10 bg-ink p-7 text-white shadow-[0_34px_90px_rgba(7,17,31,0.2)]">
+              <div className="absolute -left-16 top-10 h-44 w-44 rounded-full bg-aqua/20 blur-3xl" />
+              <div className="absolute -right-20 bottom-0 h-52 w-52 rounded-full bg-violetTech/20 blur-3xl" />
+              <div className="relative">
+                <span className="grid h-14 w-14 place-items-center rounded-3xl bg-white/10 text-aqua ring-1 ring-white/10">
+                  <Compass className="h-7 w-7" />
+                </span>
+                <h3 className="mt-7 text-3xl font-black leading-tight">من أين أبدأ؟</h3>
+                <p className="mt-4 text-sm leading-8 text-white/72">
+                  إذا لم تكن متأكدًا من المجال، اختر جلسة تحديد المسار. وإذا كان المجال واضحًا، ابدأ من بطاقة المجال مباشرة.
+                </p>
 
-            <article className="rounded-3xl border border-black/10 bg-white/88 p-8 text-center shadow-soft backdrop-blur transition hover:-translate-y-1 hover:shadow-float">
-              <span className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-slate-100 text-signal ring-1 ring-black/10">
-                <Layers3 className="h-8 w-8" />
-              </span>
-              <h3 className="mt-7 text-2xl font-black text-ink">اختر جلسة جاهزة</h3>
-              <p className="mx-auto mt-4 max-w-sm text-sm leading-8 text-slate-600">
-                تصفح أنواع الجلسات الجاهزة مثل تحديد المسار، مراجعة CV، أو تحضير المقابلة، ثم اختر الأنسب لك.
-              </p>
-              <ButtonLink to="/sessions" variant="secondary" size="lg" className="mt-8 h-14 w-full bg-paper">
-                عرض الجلسات
-                <ArrowLeft className="h-5 w-5" />
-              </ButtonLink>
-            </article>
-          </div>
-
-          <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-3xl border border-black/10 bg-white/86 shadow-soft backdrop-blur">
-            <div className="grid md:grid-cols-4">
-              {steps.map((step, index) => (
-                <div key={step.title} className="border-b border-black/10 p-5 last:border-b-0 md:border-b-0 md:border-l">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-ink text-white">
-                      <step.icon className="h-5 w-5" />
-                    </span>
-                    <span className="text-2xl font-black text-slate-200">0{index + 1}</span>
-                  </div>
-                  <h4 className="mt-4 font-black text-ink">{step.title}</h4>
-                  <p className="mt-2 text-xs leading-6 text-slate-500">{step.description}</p>
+                <div className="mt-7 grid gap-3">
+                  {[
+                    "اقتراح خبراء حسب المسار.",
+                    "ربط المجال بنوع الجلسة المناسب.",
+                    "خطوة حجز مختصرة بلا فورم طويل.",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white/84">
+                      <span>{item}</span>
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-primary-500" />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="relative overflow-hidden bg-white py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_28%,rgba(126,221,241,0.16),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(184,167,255,0.14),transparent_32%)]" />
-        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
-          <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
-            <div className="rounded-3xl border border-black/10 bg-white/86 p-7 shadow-soft backdrop-blur lg:sticky lg:top-28">
-              <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-paper px-4 py-2 text-sm font-black text-slate-700">
-                <Route className="h-4 w-4 text-primary-700" />
-                ابدأ من المجال
-              </p>
-              <h2 className="mt-6 text-4xl font-black leading-tight text-ink sm:text-5xl">
-                مسارات تقنية
-                <span className="masar-heading-gradient block pb-1">تختصر عليك الحيرة</span>
-              </h2>
-              <p className="mt-5 text-base leading-8 text-slate-600">
-                اختر المجال الذي تفكر به، وسنوصلك إلى خبراء مناسبين وجلسات أقرب لسؤالك الحالي بدل التشتت بين خيارات كثيرة.
-              </p>
-
-              <div className="mt-7 grid gap-3">
-                {[
-                  "تصفية الخبراء حسب المجال.",
-                  "فهم نوع الجلسة الأنسب لكل مسار.",
-                  "بدء الحجز من نقطة واضحة.",
-                ].map((item) => (
-                  <div key={item} className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-paper/80 px-4 py-3 text-sm font-bold text-slate-700">
-                    <span>{item}</span>
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary-700" />
-                  </div>
-                ))}
+                <ButtonLink to="/tracks" size="lg" className="mt-8 h-14 w-full">
+                  عرض كل المجالات
+                  <ArrowLeft className="h-5 w-5" />
+                </ButtonLink>
               </div>
-
-              <ButtonLink to="/tracks" variant="secondary" size="lg" className="mt-8 h-14 w-full bg-white">
-                عرض كل المجالات
-                <ArrowLeft className="h-5 w-5" />
-              </ButtonLink>
-            </div>
+            </aside>
 
             {tracks.isLoading ? (
               <LoadingState />
@@ -632,27 +552,29 @@ export function HomePage() {
                 تعذر تحميل المجالات الآن.
               </div>
             ) : tracks.data?.length ? (
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {tracks.data.slice(0, 8).map((track, index) => {
                   const Icon = trackIcons[index % trackIcons.length]
                   return (
                     <Link
                       key={track.id}
                       to={`/experts?track=${track.slug}`}
-                      className="group relative min-h-[220px] overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-6 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/35 hover:shadow-float"
+                      className="group relative min-h-[198px] overflow-hidden rounded-3xl border border-black/10 bg-white/88 p-6 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:border-primary-500/35 hover:bg-white hover:shadow-float"
                     >
-                      <div className="absolute inset-x-6 top-0 h-1 rounded-b-full bg-gradient-to-l from-primary-500 via-aqua to-violetTech opacity-0 transition group-hover:opacity-100" />
-                      <div className="absolute -left-16 -bottom-16 h-40 w-40 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/16" />
+                      <div className="absolute inset-x-7 top-0 h-1 rounded-b-full bg-gradient-to-l from-primary-500 via-aqua to-violetTech opacity-0 transition duration-300 group-hover:opacity-100" />
+                      <div className="absolute -left-14 -bottom-14 h-36 w-36 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/18" />
                       <div className="relative flex items-start justify-between gap-4">
-                        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:bg-primary-50">
+                        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:-translate-y-1 group-hover:bg-primary-50">
                           <Icon className="h-6 w-6" />
                         </span>
-                        <span className="grid h-10 w-10 place-items-center rounded-full bg-white text-slate-400 shadow-sm ring-1 ring-black/10 transition group-hover:-translate-x-1 group-hover:bg-ink group-hover:text-white">
-                          <ArrowLeft className="h-4 w-4" />
-                        </span>
+                        <span className="rounded-full bg-paper px-3 py-1.5 text-xs font-black text-slate-500 ring-1 ring-black/10">0{index + 1}</span>
                       </div>
                       <h3 className="relative mt-7 text-xl font-black text-ink transition group-hover:text-primary-700">{track.name}</h3>
-                      <p className="relative mt-3 line-clamp-3 text-sm leading-8 text-slate-600">{track.description}</p>
+                      <p className="relative mt-3 line-clamp-2 text-sm leading-7 text-slate-600">{track.description}</p>
+                      <span className="relative mt-5 inline-flex items-center gap-2 text-sm font-black text-primary-700 transition group-hover:-translate-x-1">
+                        خبراء هذا المجال
+                        <ArrowLeft className="h-4 w-4" />
+                      </span>
                     </Link>
                   )
                 })}
@@ -716,59 +638,6 @@ export function HomePage() {
                 <EmptyState title="لا يوجد خبراء بعد" description="شغل seed data لعرض الخبراء التجريبيين." />
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f7fafc_100%)] py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_76%,rgba(85,214,194,0.15),transparent_28%),radial-gradient(circle_at_86%_22%,rgba(246,167,201,0.12),transparent_30%)]" />
-        <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
-                <Sparkles className="h-4 w-4 text-primary-600" />
-                منتجات مسار
-              </p>
-              <h2 className="mt-7 text-4xl font-black leading-[1.2] text-ink sm:text-5xl">
-                خدمات واضحة
-                <span className="masar-heading-gradient block pb-1">تنتهي بخطوة قابلة للتنفيذ</span>
-              </h2>
-            </div>
-            <p className="max-w-xl text-base leading-8 text-slate-600 lg:justify-self-end">
-              جلسات واضحة، خبراء مناسبون، ومخرجات قابلة للتطبيق بعد انتهاء الجلسة. كل منتج داخل مسار مصمم ليقلل الحيرة ويزيد وضوح الخطوة القادمة.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {platformProducts.map((product, index) => (
-              <article
-                key={product.title}
-                className="group relative min-h-[360px] overflow-hidden rounded-3xl border border-black/10 bg-white/86 p-7 shadow-soft backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/35 hover:shadow-float"
-              >
-                <div className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#55d6c2,#7eddf1,#b8a7ff,#f6a7c9)]" />
-                <div className="absolute -left-20 -bottom-20 h-52 w-52 rounded-full bg-aqua/16 blur-3xl transition group-hover:bg-aqua/24" />
-                <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-violetTech/16 blur-3xl transition group-hover:bg-violetTech/24" />
-
-                <div className="relative flex items-start justify-between gap-5">
-                  <span className="grid h-16 w-16 place-items-center rounded-3xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:bg-primary-50">
-                    <product.icon className="h-8 w-8" />
-                  </span>
-                  <span className="rounded-full bg-paper px-3 py-1.5 text-xs font-black text-slate-500 ring-1 ring-black/10">0{index + 1}</span>
-                </div>
-
-                <div className="relative mt-10">
-                  <h3 className="text-2xl font-black leading-9 text-ink transition group-hover:text-primary-700">{product.title}</h3>
-                  <p className="mt-4 text-sm leading-8 text-slate-600">{product.description}</p>
-                </div>
-
-                <div className="relative mt-8 border-t border-black/10 pt-5">
-                  <Link to={index === 0 ? "/experts" : index === 1 ? "/sessions" : "/tracks"} className="inline-flex items-center gap-2 text-sm font-black text-primary-700 transition group-hover:-translate-x-1">
-                    ابدأ من هنا
-                    <ArrowLeft className="h-4 w-4" />
-                  </Link>
-                </div>
-              </article>
-            ))}
           </div>
         </div>
       </section>
