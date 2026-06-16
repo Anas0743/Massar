@@ -157,21 +157,52 @@ const articleCards = [
   },
 ]
 
+const testimonialStats = [
+  { value: "جلسة واحدة", label: "وضوح في القرار التالي", icon: Target },
+  { value: "30 يوم", label: "خطة قابلة للمتابعة", icon: CalendarCheck2 },
+  { value: "3 ملفات", label: "CV وLinkedIn وGitHub بصورة أقوى", icon: ClipboardCheck },
+]
+
 const testimonials = [
   {
-    quote: "كنت محتارًا بين Frontend وMobile. بعد جلسة واحدة خرجت بخطة أسبوعية ومشروع صغير أبدأ به فورًا.",
+    quote: "كنت محتارًا بين تطوير الواجهات وتطبيقات الجوال. بعد جلسة واحدة خرجت بخطة أسبوعية ومشروع صغير أبدأ به فورًا.",
     name: "طالب سنة ثالثة",
     meta: "Computer Science",
+    focus: "اختيار المسار",
+    before: "تشتت بين الواجهات وتطبيقات الجوال",
+    after: "خطة أسبوعية ومشروع بداية",
+    result: "مشروع أول قابل للعرض",
+    icon: Compass,
   },
   {
     quote: "مراجعة GitHub كشفت لي أشياء ما كنت منتبهًا لها. التعديلات التي أخذتها للجلسة حسنت مقابلاتي كثيرًا.",
     name: "خريج جديد",
     meta: "Backend Track",
+    focus: "جاهزية التقديم",
+    before: "مشاريع موجودة لكن غير واضحة",
+    after: "README وترتيب أقوى للملف",
+    result: "مقابلات أكثر ثقة",
+    icon: ClipboardCheck,
   },
   {
     quote: "الجلسة لم تكن كلامًا عامًا. أخذت مصادر، أولويات، وخطوة تالية واضحة لمشروع التخرج.",
     name: "فريق مشروع تخرج",
     meta: "AI / Data",
+    focus: "مشروع التخرج",
+    before: "فكرة واسعة بلا أولويات",
+    after: "تقسيم عملي ومصادر دقيقة",
+    result: "خطة تسليم أوضح",
+    icon: GraduationCap,
+  },
+  {
+    quote: "كنت أسمع نصائح كثيرة عن التخصص. المقارنة داخل الجلسة جعلت القرار مرتبطًا بميولي وفرص السوق.",
+    name: "طالبة مقبلة على الجامعة",
+    meta: "IT Orientation",
+    focus: "تخصص الجامعة",
+    before: "قرار مبني على آراء متفرقة",
+    after: "مقارنة حسب الميول وفرص السوق",
+    result: "اختيار أقرب بثقة",
+    icon: Route,
   },
 ]
 
@@ -312,6 +343,8 @@ export function HomePage() {
   const mentorStripExperts = mentorExperts.length ? [...mentorExperts, ...mentorExperts] : []
   const selectedAudience = audienceTabs[activeAudience] || audienceTabs[0]
   const SelectedAudienceIcon = selectedAudience.icon
+  const [featuredTestimonial, ...impactTestimonials] = testimonials
+  const FeaturedTestimonialIcon = featuredTestimonial.icon
 
   return (
     <>
@@ -985,47 +1018,137 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-paper py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(184,167,255,0.16),transparent_28%),radial-gradient(circle_at_86%_72%,rgba(85,214,194,0.13),transparent_30%)]" />
+      <section className="masar-grain relative overflow-hidden bg-[linear-gradient(180deg,#f7fafc_0%,#ffffff_46%,#eefdf8_100%)] py-24">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary-500/30 to-transparent" />
         <div className="relative mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 xl:px-0">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
-              <Quote className="h-4 w-4 text-primary-600" />
-              آراء الطلاب
-            </p>
-            <h2 className="mt-7 text-4xl font-black leading-[1.2] text-ink sm:text-5xl">ما الذي يتغير بعد جلسة واضحة؟</h2>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600">
-              شهادات قصيرة توضّح الفرق بين نصائح عامة وجلسة تنتهي بخطة قابلة للتطبيق.
-            </p>
+          <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-5 py-2 text-sm font-black text-slate-700 shadow-sm backdrop-blur">
+                <Quote className="h-4 w-4 text-primary-600" />
+                آراء الطلاب بعد الجلسة
+              </p>
+              <h2 className="mt-7 max-w-3xl text-4xl font-black leading-[1.2] text-ink sm:text-5xl">
+                تجارب توضّح ما الذي يتغير فعليًا
+              </h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
+                بدل اقتباسات عامة، نعرض الفرق الذي يلمسه الطالب: قرار أوضح، ملف أقوى، وخطوة تنفيذ تبدأ من نفس الأسبوع.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {testimonialStats.map((stat) => {
+                const StatIcon = stat.icon
+
+                return (
+                  <div key={stat.label} className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
+                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-primary-50 text-primary-700 ring-1 ring-primary-500/15">
+                      <StatIcon className="h-5 w-5" />
+                    </span>
+                    <p className="mt-4 text-lg font-black text-ink">{stat.value}</p>
+                    <p className="mt-2 text-xs font-bold leading-6 text-slate-500">{stat.label}</p>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {testimonials.map((story, index) => (
-              <article
-                key={story.name}
-                className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white/88 p-7 shadow-soft backdrop-blur transition duration-300 hover:-translate-y-2 hover:border-primary-500/30 hover:shadow-float"
-              >
-                <div className="absolute -left-14 -top-14 h-36 w-36 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/16" />
-                <div className="relative flex items-start justify-between gap-4">
-                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10">
-                    <Quote className="h-6 w-6" />
-                  </span>
-                  <span className="text-xs font-black text-slate-300">0{index + 1}</span>
+          <div className="mt-14 grid gap-6 lg:grid-cols-[1.02fr_1.18fr] lg:items-stretch">
+            <article className="relative overflow-hidden rounded-[2rem] bg-ink p-6 text-white shadow-[0_28px_80px_rgba(7,17,31,0.22)] sm:p-8">
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-l from-primary-500 via-aqua to-coral" />
+              <div className="flex items-start justify-between gap-4">
+                <span className="grid h-16 w-16 place-items-center rounded-3xl bg-white/10 text-primary-500 ring-1 ring-white/15">
+                  <FeaturedTestimonialIcon className="h-7 w-7" />
+                </span>
+                <div className="flex rounded-full bg-white/8 px-3 py-2 text-sun ring-1 ring-white/10" aria-label="تقييم خمسة نجوم">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} className="h-4 w-4 fill-current" />
+                  ))}
                 </div>
-                <p className="relative mt-7 min-h-36 text-sm font-medium leading-8 text-slate-700">{story.quote}</p>
-                <div className="relative mt-7 flex items-center justify-between gap-4 border-t border-black/10 pt-5">
-                  <div>
-                    <h3 className="font-black text-ink">{story.name}</h3>
-                    <p className="mt-1 text-xs font-bold text-slate-500">{story.meta}</p>
-                  </div>
-                  <div className="flex text-sun" aria-label="تقييم خمسة نجوم">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
+              </div>
+
+              <p className="mt-8 text-2xl font-black leading-10 sm:text-3xl sm:leading-[1.7]">“{featuredTestimonial.quote}”</p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-4">
+                  <p className="text-xs font-black text-white/45">قبل الجلسة</p>
+                  <p className="mt-2 text-sm font-bold leading-7 text-white/82">{featuredTestimonial.before}</p>
                 </div>
-              </article>
-            ))}
+                <div className="rounded-3xl border border-primary-500/25 bg-primary-500/10 p-4">
+                  <p className="text-xs font-black text-primary-500">بعد الجلسة</p>
+                  <p className="mt-2 text-sm font-bold leading-7 text-white">{featuredTestimonial.after}</p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="font-black">{featuredTestimonial.name}</h3>
+                  <p className="mt-1 text-sm font-bold text-white/52">{featuredTestimonial.meta}</p>
+                </div>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-ink">
+                  <CheckCircle2 className="h-4 w-4 text-primary-700" />
+                  {featuredTestimonial.result}
+                </span>
+              </div>
+            </article>
+
+            <div className="grid gap-4">
+              {impactTestimonials.map((story, index) => {
+                const StoryIcon = story.icon
+
+                return (
+                  <article
+                    key={story.name}
+                    className="group grid gap-5 rounded-3xl border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-primary-500/30 hover:shadow-float sm:grid-cols-[auto_1fr]"
+                  >
+                    <div className="flex items-start justify-between gap-3 sm:block">
+                      <span className="grid h-14 w-14 place-items-center rounded-2xl bg-paper text-primary-700 ring-1 ring-black/10 transition group-hover:bg-primary-50">
+                        <StoryIcon className="h-6 w-6" />
+                      </span>
+                      <span className="rounded-full bg-paper px-3 py-1 text-xs font-black text-slate-400 ring-1 ring-black/10 sm:mt-4 sm:inline-flex">
+                        0{index + 2}
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-primary-50 px-3 py-1.5 text-xs font-black text-primary-700 ring-1 ring-primary-500/15">
+                          {story.focus}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-500">
+                          <Sparkles className="h-3.5 w-3.5 text-signal" />
+                          {story.result}
+                        </span>
+                      </div>
+
+                      <p className="mt-4 text-sm font-medium leading-8 text-slate-700">{story.quote}</p>
+
+                      <div className="mt-5 grid gap-3 md:grid-cols-2">
+                        <div className="rounded-2xl border border-black/10 bg-paper px-4 py-3">
+                          <p className="text-[11px] font-black text-slate-400">قبل</p>
+                          <p className="mt-1 text-sm font-bold leading-7 text-slate-600">{story.before}</p>
+                        </div>
+                        <div className="rounded-2xl border border-primary-500/20 bg-primary-50 px-4 py-3">
+                          <p className="text-[11px] font-black text-primary-700">بعد</p>
+                          <p className="mt-1 text-sm font-bold leading-7 text-ink">{story.after}</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 pt-4">
+                        <div>
+                          <h3 className="font-black text-ink">{story.name}</h3>
+                          <p className="mt-1 text-xs font-bold text-slate-500">{story.meta}</p>
+                        </div>
+                        <div className="flex text-sun" aria-label="تقييم خمسة نجوم">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className="h-4 w-4 fill-current" />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
           </div>
         </div>
       </section>
