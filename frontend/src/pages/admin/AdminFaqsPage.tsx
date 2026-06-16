@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 import { LoadingState } from "../../components/LoadingState"
@@ -35,7 +35,7 @@ export function AdminFaqsPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
       <form
-        className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-float backdrop-blur"
+        className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-5 shadow-float backdrop-blur"
         onSubmit={(event) => {
           event.preventDefault()
           create.mutate(form)
@@ -62,7 +62,7 @@ export function AdminFaqsPage() {
       <div className="space-y-4">
         <h1 className="text-2xl font-black">الأسئلة الشائعة</h1>
         {faqs.data?.map((faq) => (
-          <article key={faq.id} className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+          <article key={faq.id} className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <h2 className="font-black">{faq.question}</h2>
@@ -83,3 +83,4 @@ export function AdminFaqsPage() {
     </div>
   )
 }
+

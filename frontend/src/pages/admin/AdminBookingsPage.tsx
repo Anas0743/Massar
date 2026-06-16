@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { LoadingState } from "../../components/LoadingState"
 import { BookingStatusBadge, PaymentStatusBadge } from "../../components/StatusBadge"
@@ -29,10 +29,13 @@ export function AdminBookingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-black">كل الحجوزات</h1>
+      <div className="masar-soft-panel rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
+        <h1 className="text-2xl font-black">كل الحجوزات</h1>
+        <p className="mt-2 text-sm leading-7 text-slate-600">تحكم بحالة الحجز والدفع اليدوي من مكان واحد.</p>
+      </div>
       <div className="grid gap-4">
         {bookings.data?.map((booking) => (
-          <article key={booking.id} className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+          <article key={booking.id} className="overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
@@ -67,3 +70,4 @@ export function AdminBookingsPage() {
     </div>
   )
 }
+

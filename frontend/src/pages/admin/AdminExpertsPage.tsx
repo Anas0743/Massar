@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 import { LoadingState } from "../../components/LoadingState"
@@ -54,7 +54,7 @@ export function AdminExpertsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur">
+      <div className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
         <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
         <h1 className="text-2xl font-black">إدارة الخبراء</h1>
         <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -63,7 +63,7 @@ export function AdminExpertsPage() {
       </div>
 
       <form
-        className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-float backdrop-blur"
+        className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-5 shadow-float backdrop-blur"
         onSubmit={(event) => {
           event.preventDefault()
           create.mutate(form)
@@ -125,7 +125,7 @@ export function AdminExpertsPage() {
 
       <div className="grid gap-4">
         {experts.data?.map((expert) => (
-          <article key={expert.id} className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+          <article key={expert.id} className="overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
@@ -154,3 +154,4 @@ export function AdminExpertsPage() {
     </div>
   )
 }
+

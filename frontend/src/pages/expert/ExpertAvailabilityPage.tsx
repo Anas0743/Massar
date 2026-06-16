@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Plus, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -46,7 +46,7 @@ export function ExpertAvailabilityPage() {
   if (availability.isLoading) return <LoadingState />
 
   return (
-    <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur">
+    <div className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
       <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -61,7 +61,7 @@ export function ExpertAvailabilityPage() {
 
       <div className="mt-6 grid gap-3">
         {rows.map((row, index) => (
-          <div key={`${row.day_of_week}-${index}`} className="grid gap-3 rounded-md bg-paper p-4 ring-1 ring-black/10 md:grid-cols-[1fr_1fr_1fr_auto]">
+          <div key={`${row.day_of_week}-${index}`} className="grid gap-3 rounded-3xl bg-paper p-4 ring-1 ring-black/10 md:grid-cols-[1fr_1fr_1fr_auto]">
             <Select value={row.day_of_week} onChange={(event) => setRows((value) => value.map((item, itemIndex) => (itemIndex === index ? { ...item, day_of_week: Number(event.target.value) } : item)))}>
               {dayNames.map((day, dayIndex) => (
                 <option key={day} value={dayIndex}>
@@ -84,3 +84,4 @@ export function ExpertAvailabilityPage() {
     </div>
   )
 }
+

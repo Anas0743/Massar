@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { EmptyState } from "../../components/EmptyState"
 import { LoadingState } from "../../components/LoadingState"
@@ -23,14 +23,14 @@ export function StudentBookingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="masar-soft-panel rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
         <h1 className="text-2xl font-black">حجوزاتي</h1>
         <p className="mt-2 text-sm text-slate-600">تابع الحالة ورابط الاجتماع والملخص بعد الجلسة.</p>
       </div>
       {bookings.data?.length ? (
         <div className="grid gap-4">
           {bookings.data.map((booking) => (
-            <article key={booking.id} className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+            <article key={booking.id} className="overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
               <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
@@ -64,3 +64,4 @@ export function StudentBookingsPage() {
     </div>
   )
 }
+

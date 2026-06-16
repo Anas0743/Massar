@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+﻿import { useQuery } from "@tanstack/react-query"
 import { Search, SlidersHorizontal } from "lucide-react"
 import { useMemo, useState } from "react"
 import { useSearchParams } from "react-router-dom"
@@ -30,8 +30,8 @@ export function ExpertsPage() {
   const experts = useQuery({ queryKey: ["experts", params], queryFn: () => publicAPI.experts(params) })
 
   return (
-    <section className="masar-grain relative -mt-20 min-h-screen bg-paper pb-16 pt-28">
-      <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-primary-100/70 via-coral/10 to-transparent" />
+    <section className="masar-page-shell masar-grain relative -mt-20 min-h-screen overflow-hidden pb-16 pt-32">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_22%,rgba(126,221,241,0.18),transparent_32%),radial-gradient(circle_at_86%_66%,rgba(184,167,255,0.16),transparent_36%)]" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative mx-auto max-w-4xl text-center">
           <div className="mx-auto mb-7 flex max-w-md items-center gap-4">
@@ -42,13 +42,17 @@ export function ExpertsPage() {
           <span className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-xs font-black text-ink ring-1 ring-black/10 backdrop-blur">
             خبراء مسار
           </span>
-          <h1 className="mt-6 text-4xl font-black leading-tight text-ink sm:text-5xl">اختر الخبير الذي يفهم سؤالك قبل أن تبدأ الجلسة</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
+          <h1 className="mt-6 text-4xl font-black leading-[1.18] text-ink sm:text-5xl lg:text-6xl">
+            اختر الخبير الذي يفهم سؤالك
+            <span className="masar-heading-gradient block pb-1">قبل أن تبدأ الجلسة</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
             فلترة بسيطة حسب المجال والسعر والتقييم، ثم صفحة تفاصيل واضحة لاختيار نوع الجلسة والموعد.
           </p>
         </div>
 
-        <div className="relative mb-8 mt-10 rounded-md border border-black/10 bg-white/88 p-5 shadow-float backdrop-blur">
+        <div className="masar-soft-panel relative mb-8 mt-12 overflow-hidden rounded-3xl border border-black/10 p-5 shadow-float backdrop-blur">
+          <div className="absolute inset-x-8 top-0 h-1 rounded-b-full bg-gradient-to-l from-primary-500 via-aqua to-violetTech" />
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-black text-ink">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-white">
@@ -123,3 +127,4 @@ export function ExpertsPage() {
     </section>
   )
 }
+

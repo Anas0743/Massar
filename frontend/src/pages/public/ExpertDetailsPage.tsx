@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { BadgeCheck, CalendarClock, Clock, Code2, ExternalLink, Star, UserRoundCheck, WalletCards } from "lucide-react"
 import { useForm, useWatch } from "react-hook-form"
@@ -74,7 +74,7 @@ export function ExpertDetailsPage() {
   if (!expert.data) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-12">
-        <div className="rounded-md border border-black/10 bg-white p-8 text-center shadow-float">
+        <div className="rounded-3xl border border-black/10 bg-white p-8 text-center shadow-float">
           <h1 className="text-2xl font-black text-ink">لم يتم العثور على الخبير</h1>
           <p className="mt-3 text-sm leading-7 text-slate-600">قد يكون الرابط قديمًا أو أن حساب الخبير غير معتمد بعد.</p>
           <ButtonLink to="/experts" className="mt-6">
@@ -88,18 +88,18 @@ export function ExpertDetailsPage() {
   const selectedSession = expert.data.session_types.find((item) => item.id === Number(selectedSessionId))
 
   return (
-    <section className="masar-grain relative -mt-20 bg-paper pb-16 pt-28">
-      <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-primary-100/60 via-coral/10 to-transparent" />
+    <section className="masar-page-shell masar-grain relative -mt-20 overflow-hidden pb-16 pt-32">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(126,221,241,0.18),transparent_32%),radial-gradient(circle_at_88%_72%,rgba(184,167,255,0.15),transparent_36%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_380px] lg:px-8">
         <div className="space-y-6">
-          <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 shadow-float backdrop-blur">
+          <div className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 shadow-float backdrop-blur">
             <div className="masar-progress h-2" />
             <div className="p-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-start">
               <img
                 src={expert.data.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(expert.data.name)}`}
                 alt={expert.data.name}
-                className="h-28 w-28 rounded-full object-cover ring-4 ring-primary-50"
+                className="h-32 w-32 rounded-3xl object-cover shadow-float ring-4 ring-white"
               />
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -113,19 +113,19 @@ export function ExpertDetailsPage() {
                     </Link>
                   ))}
                 </div>
-                <h1 className="mt-4 text-3xl font-black text-ink">{expert.data.name}</h1>
+                <h1 className="mt-5 text-4xl font-black leading-tight text-ink">{expert.data.name}</h1>
                 <p className="mt-2 text-lg font-bold text-slate-600">{expert.data.title}</p>
                 <p className="mt-1 text-sm text-slate-500">{expert.data.company}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <span className="flex items-center gap-2 rounded-md bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
+                  <span className="flex items-center gap-2 rounded-3xl bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
                     <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
                     {expert.data.rating_average || "جديد"} ({expert.data.rating_count})
                   </span>
-                  <span className="flex items-center gap-2 rounded-md bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
+                  <span className="flex items-center gap-2 rounded-3xl bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
                     <Clock className="h-5 w-5 text-aqua" />
                     {expert.data.years_of_experience} سنوات خبرة
                   </span>
-                  <span className="flex items-center gap-2 rounded-md bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
+                  <span className="flex items-center gap-2 rounded-3xl bg-paper p-3 text-sm font-bold text-slate-700 ring-1 ring-black/10">
                     <WalletCards className="h-5 w-5 text-sun" />
                     {formatCurrency(expert.data.hourly_price)}
                   </span>
@@ -156,11 +156,11 @@ export function ExpertDetailsPage() {
             </div>
           </div>
 
-          <div className="rounded-md border border-black/10 bg-white/88 p-6 shadow-sm backdrop-blur">
+          <div className="rounded-3xl border border-black/10 bg-white/88 p-6 shadow-soft backdrop-blur">
             <h2 className="text-xl font-black text-ink">أنواع الجلسات</h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {expert.data.session_types.map((session) => (
-                <div key={session.id} className="rounded-md border border-black/10 bg-paper p-4 shadow-sm transition hover:border-primary-200">
+                <div key={session.id} className="rounded-3xl border border-black/10 bg-paper p-4 shadow-sm transition hover:border-primary-200">
                   <h3 className="font-black">{session.name}</h3>
                   <p className="mt-2 text-sm leading-7 text-slate-600">{session.description}</p>
                   <p className="mt-3 text-sm font-black text-primary-700">
@@ -171,11 +171,11 @@ export function ExpertDetailsPage() {
             </div>
           </div>
 
-          <div className="rounded-md border border-black/10 bg-white/88 p-6 shadow-sm backdrop-blur">
+          <div className="rounded-3xl border border-black/10 bg-white/88 p-6 shadow-soft backdrop-blur">
             <h2 className="text-xl font-black text-ink">الأوقات المتاحة أسبوعيًا</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {expert.data.availability.map((slot) => (
-                <div key={slot.id} className="flex items-center gap-3 rounded-md bg-paper p-4 text-sm font-bold text-slate-700 ring-1 ring-black/10">
+                <div key={slot.id} className="flex items-center gap-3 rounded-3xl bg-paper p-4 text-sm font-bold text-slate-700 ring-1 ring-black/10">
                   <CalendarClock className="h-5 w-5 text-aqua" />
                   {dayNames[slot.day_of_week]} من {slot.start_time.slice(0, 5)} إلى {slot.end_time.slice(0, 5)}
                 </div>
@@ -183,12 +183,12 @@ export function ExpertDetailsPage() {
             </div>
           </div>
 
-          <div className="rounded-md border border-black/10 bg-white/88 p-6 shadow-sm backdrop-blur">
+          <div className="rounded-3xl border border-black/10 bg-white/88 p-6 shadow-soft backdrop-blur">
             <h2 className="text-xl font-black text-ink">التقييمات</h2>
             <div className="mt-4 grid gap-3">
               {reviews.data?.length ? (
                 reviews.data.map((review) => (
-                  <div key={review.id} className="rounded-md bg-paper p-4 ring-1 ring-black/10">
+                  <div key={review.id} className="rounded-3xl bg-paper p-4 ring-1 ring-black/10">
                     <div className="flex items-center justify-between gap-3">
                       <p className="font-black">{review.student_name || "طالب"}</p>
                       <span className="text-sm font-black text-amber-500">{"★".repeat(review.rating)}</span>
@@ -204,24 +204,24 @@ export function ExpertDetailsPage() {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="overflow-hidden rounded-md border border-black/10 bg-white/92 shadow-float backdrop-blur">
+          <div className="masar-dark-panel overflow-hidden rounded-3xl border border-white/10 text-white shadow-float">
             <div className="masar-progress h-1.5" />
             <div className="p-5">
             <div className="mb-5 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-black text-ink">احجز جلسة</h2>
-                <p className="mt-1 text-sm text-slate-500">خطوات قليلة، والدفع يدوي في الـ MVP.</p>
+                <h2 className="text-xl font-black text-white">احجز جلسة</h2>
+                <p className="mt-1 text-sm text-white/62">خطوات قليلة، والدفع يدوي في الـ MVP.</p>
               </div>
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-primary-100 text-primary-700">
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-white/10 text-primary-500 ring-1 ring-white/10">
                 <Clock className="h-5 w-5" />
               </span>
             </div>
             {user && user.role !== "student" ? (
-              <div className="rounded-md bg-amber-50 p-4 text-sm font-bold leading-7 text-amber-700">
+              <div className="rounded-3xl bg-amber-50 p-4 text-sm font-bold leading-7 text-amber-700">
                 الحجز متاح فقط لحساب الطالب. يمكنك إنشاء حساب طالب لتجربة التدفق.
               </div>
             ) : null}
-            <form className="mt-5 space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="mt-5 space-y-4 [&_label>span:first-child]:text-white/80" onSubmit={form.handleSubmit(onSubmit)}>
               <Field label="نوع الجلسة" error={form.formState.errors.session_type_id?.message}>
                 <Select {...form.register("session_type_id")}>
                   <option value={0}>اختر نوع المشكلة</option>
@@ -239,7 +239,7 @@ export function ExpertDetailsPage() {
                 <Textarea placeholder="مثال: أريد خطة لتجهيز GitHub والتقديم على تدريب Frontend..." {...form.register("student_message")} />
               </Field>
               {selectedSession ? (
-                <div className="rounded-md bg-paper p-4 text-sm font-bold text-slate-700 ring-1 ring-black/10">
+                <div className="rounded-3xl bg-white/[0.08] p-4 text-sm font-bold text-white/78 ring-1 ring-white/10">
                   السعر المتوقع: {formatCurrency(selectedSession.custom_price ?? selectedSession.base_price)} - مدة الجلسة: {selectedSession.duration_minutes} دقيقة
                 </div>
               ) : null}
@@ -254,7 +254,7 @@ export function ExpertDetailsPage() {
             </form>
             <div className="mt-4">
               <BookingStatusBadge status="pending" />
-              <p className="mt-2 text-xs leading-6 text-slate-500">سيبدأ الحجز كطلب قيد الانتظار حتى يؤكد الخبير أو الأدمن الموعد.</p>
+              <p className="mt-2 text-xs leading-6 text-white/55">سيبدأ الحجز كطلب قيد الانتظار حتى يؤكد الخبير أو الأدمن الموعد.</p>
             </div>
             </div>
           </div>
@@ -263,3 +263,4 @@ export function ExpertDetailsPage() {
     </section>
   )
 }
+

@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { LogIn } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -40,8 +40,8 @@ export function LoginPage() {
   })
 
   return (
-    <section className="masar-grain relative -mt-20 min-h-[760px] overflow-hidden bg-paper pb-16 pt-28">
-      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-primary-100/60 to-transparent" />
+    <section className="masar-page-shell masar-grain relative -mt-20 min-h-[760px] overflow-hidden pb-16 pt-32">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_20%,rgba(126,221,241,0.18),transparent_32%),radial-gradient(circle_at_86%_70%,rgba(246,167,201,0.13),transparent_34%)]" />
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mx-auto mb-7 flex max-w-md items-center gap-4">
@@ -52,14 +52,18 @@ export function LoginPage() {
           <span className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-xs font-black text-ink ring-1 ring-black/10 backdrop-blur">
             دخول آمن حسب الدور
           </span>
-          <h1 className="mt-6 text-4xl font-black leading-tight text-ink sm:text-5xl">ارجع لمسارك من آخر خطوة توقفت عندها</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
+          <h1 className="mt-6 text-4xl font-black leading-[1.18] text-ink sm:text-5xl lg:text-6xl">
+            ارجع لمسارك
+            <span className="masar-heading-gradient block pb-1">من آخر خطوة توقفت عندها</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
             حساب الطالب يفتح الحجوزات والخطط، حساب الخبير يفتح الجلسات والملخصات، والأدمن يدير جودة المنصة.
           </p>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
-          <div className="flex flex-col justify-between overflow-hidden rounded-md border border-black/10 bg-ink p-6 text-white shadow-float">
+          <div className="masar-dark-panel relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 p-6 text-white shadow-float">
+            <div className="absolute -left-16 top-8 h-44 w-44 rounded-full bg-aqua/20 blur-3xl" />
             <div>
               <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-ink">
                 <LogIn className="h-5 w-5" />
@@ -73,7 +77,7 @@ export function LoginPage() {
                 ["خبير", "frontend@masar.dev"],
                 ["أدمن", "admin@masar.dev"],
               ].map(([role, email]) => (
-                <div key={email} className="rounded-md bg-white/8 p-4 ring-1 ring-white/10">
+                <div key={email} className="rounded-3xl bg-white/8 p-4 ring-1 ring-white/10">
                   <p className="font-black text-white">{role}</p>
                   <p className="mt-1 font-semibold text-primary-100">{email}</p>
                 </div>
@@ -82,7 +86,7 @@ export function LoginPage() {
             </div>
           </div>
 
-          <form className="rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
+          <form className="masar-soft-panel rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-black text-primary-700">Masar access</p>
@@ -113,3 +117,4 @@ export function LoginPage() {
     </section>
   )
 }
+

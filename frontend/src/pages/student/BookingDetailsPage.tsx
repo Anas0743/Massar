@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { ExternalLink } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -44,7 +44,7 @@ export function BookingDetailsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-        <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-float backdrop-blur">
+        <div className="overflow-hidden rounded-3xl border border-black/10 bg-white/90 p-5 shadow-float backdrop-blur">
           <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
           <div className="flex flex-wrap gap-2">
             <BookingStatusBadge status={booking.data.status} />
@@ -75,11 +75,11 @@ export function BookingDetailsPage() {
               <ExternalLink className="h-4 w-4" />
             </a>
           ) : (
-            <p className="mt-6 rounded-md bg-amber-50 p-4 text-sm font-bold text-amber-700">لم يضف الخبير رابط الاجتماع بعد.</p>
+            <p className="mt-6 rounded-3xl bg-amber-50 p-4 text-sm font-bold text-amber-700">لم يضف الخبير رابط الاجتماع بعد.</p>
           )}
         </div>
 
-        <div className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
+        <div className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
           <h2 className="text-xl font-black">رسالتك للخبير</h2>
           <p className="mt-3 text-sm leading-7 text-slate-600">{booking.data.student_message || "لا توجد رسالة."}</p>
           {booking.data.expert_message ? (
@@ -92,7 +92,7 @@ export function BookingDetailsPage() {
       </div>
 
       {booking.data.session_note ? (
-        <div className="overflow-hidden rounded-md border border-primary-200 bg-primary-100/60 p-5 shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-primary-200 bg-primary-100/60 p-5 shadow-sm">
           <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
           <h2 className="text-xl font-black text-primary-950">ملخص الجلسة وخطة الطالب</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -104,7 +104,7 @@ export function BookingDetailsPage() {
               ["مصادر مقترحة", booking.data.session_note.resources],
               ["الخطوة التالية", booking.data.session_note.next_steps],
             ].map(([label, value]) => (
-              <div key={label} className="rounded-md bg-white/78 p-4 ring-1 ring-primary-200">
+              <div key={label} className="rounded-3xl bg-white/78 p-4 ring-1 ring-primary-200">
                 <h3 className="font-black text-primary-950">{label}</h3>
                 <p className="mt-2 text-sm leading-7 text-primary-900">{value || "غير محدد"}</p>
               </div>
@@ -114,7 +114,7 @@ export function BookingDetailsPage() {
       ) : null}
 
       {booking.data.status === "completed" && !booking.data.review ? (
-        <form className="rounded-md border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur" onSubmit={form.handleSubmit((values) => review.mutate(values))}>
+        <form className="rounded-3xl border border-black/10 bg-white/90 p-5 shadow-sm backdrop-blur" onSubmit={form.handleSubmit((values) => review.mutate(values))}>
           <h2 className="text-xl font-black">قيّم الخبير</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-[180px_1fr]">
             <Field label="التقييم" error={form.formState.errors.rating?.message}>
@@ -138,3 +138,4 @@ export function BookingDetailsPage() {
     </div>
   )
 }
+

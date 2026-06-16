@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+﻿import { useQuery } from "@tanstack/react-query"
 import { CalendarCheck, ClipboardList, Star, Users } from "lucide-react"
 import { EmptyState } from "../../components/EmptyState"
 import { ExpertCard } from "../../components/ExpertCard"
@@ -20,7 +20,7 @@ export function StudentDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur">
+      <div className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
         <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -38,7 +38,7 @@ export function StudentDashboardPage() {
       </div>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_380px]">
-        <div className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
+        <div className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-xl font-black">الحجوزات القادمة</h2>
             <ButtonLink to="/dashboard/bookings" variant="secondary" size="sm">
@@ -48,7 +48,7 @@ export function StudentDashboardPage() {
           {upcoming.length ? (
             <div className="grid gap-3">
               {upcoming.map((booking) => (
-                <div key={booking.id} className="rounded-md bg-paper p-4 ring-1 ring-black/10">
+                <div key={booking.id} className="rounded-3xl bg-paper p-4 ring-1 ring-black/10">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="font-black">{booking.session_type_name}</p>
@@ -66,10 +66,10 @@ export function StudentDashboardPage() {
           )}
         </div>
 
-        <div className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
+        <div className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
           <h2 className="text-xl font-black">آخر خطة مستلمة</h2>
           {latestNote ? (
-            <div className="mt-4 rounded-md bg-primary-100/70 p-4 text-sm leading-7 text-primary-950 ring-1 ring-primary-200">
+            <div className="mt-4 rounded-3xl bg-primary-100/70 p-4 text-sm leading-7 text-primary-950 ring-1 ring-primary-200">
               <p className="font-black">ملخص الجلسة</p>
               <p className="mt-2">{latestNote.summary}</p>
               <p className="mt-3 font-black">الخطوة التالية</p>
@@ -99,3 +99,4 @@ export function StudentDashboardPage() {
     </div>
   )
 }
+

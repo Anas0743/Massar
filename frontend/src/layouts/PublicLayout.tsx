@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpenCheck, CalendarCheck2, CheckCircle2, CreditCard, LayoutDashboard, LogOut, Mail, Menu, ShieldCheck, Sparkles, X } from "lucide-react"
+﻿import { ArrowLeft, BookOpenCheck, CalendarCheck2, CheckCircle2, CreditCard, LayoutDashboard, LogOut, Mail, Menu, ShieldCheck, Sparkles, X } from "lucide-react"
 import { useState } from "react"
 import { Link, NavLink, Outlet } from "react-router-dom"
 import { ar } from "../i18n/ar"
@@ -129,7 +129,7 @@ export function PublicLayout() {
         </div>
 
         {open ? (
-          <div className="masar-glass mx-3 mt-3 rounded-md px-4 py-4 lg:hidden">
+          <div className="masar-glass mx-3 mt-3 rounded-3xl px-4 py-4 lg:hidden">
             {nav}
             <div className="mt-4 flex gap-2">
               {user ? (
@@ -269,3 +269,4 @@ export function PublicLayout() {
     </div>
   )
 }
+

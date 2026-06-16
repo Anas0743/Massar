@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 import { LoadingState } from "../../components/LoadingState"
@@ -35,7 +35,7 @@ export function AdminTracksPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
       <form
-        className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-5 shadow-float backdrop-blur"
+        className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-5 shadow-float backdrop-blur"
         onSubmit={(event) => {
           event.preventDefault()
           create.mutate(form)
@@ -65,7 +65,7 @@ export function AdminTracksPage() {
       <div className="space-y-4">
         <h1 className="text-2xl font-black">المجالات</h1>
         {tracks.data?.map((track) => (
-          <article key={track.id} className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+          <article key={track.id} className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="font-black">{track.name}</h2>
@@ -87,3 +87,4 @@ export function AdminTracksPage() {
     </div>
   )
 }
+

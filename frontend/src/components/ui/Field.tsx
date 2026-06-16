@@ -1,4 +1,4 @@
-import {
+﻿import {
   forwardRef,
   type InputHTMLAttributes,
   type ReactNode,
@@ -35,7 +35,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
     <textarea
       ref={ref}
       className={cn(
-        "min-h-28 w-full rounded-md border border-black/10 bg-white/90 px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 hover:border-black/20 focus:border-primary-500 focus:ring-4 focus:ring-primary-100",
+        "min-h-28 w-full rounded-3xl border border-black/10 bg-white/90 px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-slate-400 hover:border-black/20 focus:border-primary-500 focus:ring-4 focus:ring-primary-100",
         className,
       )}
       {...props}
@@ -61,3 +61,4 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
 )
 
 Select.displayName = "Select"
+

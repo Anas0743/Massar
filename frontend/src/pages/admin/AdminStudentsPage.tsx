@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+﻿import { useQuery } from "@tanstack/react-query"
 import { LoadingState } from "../../components/LoadingState"
 import { adminAPI } from "../../services/api"
 
@@ -9,10 +9,13 @@ export function AdminStudentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-black">إدارة الطلاب</h1>
-      <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 shadow-float backdrop-blur">
+      <div className="masar-soft-panel rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
+        <h1 className="text-2xl font-black">إدارة الطلاب</h1>
+        <p className="mt-2 text-sm leading-7 text-slate-600">عرض سريع لحسابات الطلاب وحالة كل حساب داخل المنصة.</p>
+      </div>
+      <div className="overflow-x-auto rounded-3xl border border-black/10 bg-white/90 shadow-float backdrop-blur">
         <div className="masar-progress h-1" />
-        <table className="w-full text-right text-sm">
+        <table className="min-w-[720px] w-full text-right text-sm">
           <thead className="bg-paper text-slate-500">
             <tr>
               <th className="px-4 py-3">الاسم</th>
@@ -36,3 +39,4 @@ export function AdminStudentsPage() {
     </div>
   )
 }
+

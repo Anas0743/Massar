@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
@@ -74,7 +74,7 @@ export function StudentProfilePage() {
   if (profile.isLoading) return <LoadingState />
 
   return (
-    <form className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
+    <form className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
       <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
       <h1 className="text-2xl font-black">ملفي الشخصي</h1>
       <p className="mt-2 text-sm text-slate-600">هذه البيانات تساعد المنصة تقترح خبراء وجلسات مناسبة.</p>
@@ -121,3 +121,4 @@ export function StudentProfilePage() {
     </form>
   )
 }
+

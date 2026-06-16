@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+﻿import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, Route } from "lucide-react"
 import { LoadingState } from "../../components/LoadingState"
 import { SectionHeader } from "../../components/SectionHeader"
@@ -24,7 +24,9 @@ export function TracksPage() {
         ) : (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {tracks.data?.map((track) => (
-              <article key={track.id} className="group rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-primary-200 hover:shadow-float">
+              <article key={track.id} className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:-translate-y-2 hover:border-primary-500/35 hover:bg-white hover:shadow-float">
+                <div className="absolute inset-x-6 top-0 h-1 rounded-b-full bg-gradient-to-l from-primary-500 via-aqua to-violetTech opacity-0 transition group-hover:opacity-100" />
+                <div className="absolute -left-12 -bottom-12 h-32 w-32 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/18" />
                 <div className="flex items-center justify-between gap-3">
                   <span className="grid h-12 w-12 place-items-center rounded-full bg-primary-100 text-primary-700">
                     <Route className="h-6 w-6" />
@@ -45,3 +47,4 @@ export function TracksPage() {
     </section>
   )
 }
+

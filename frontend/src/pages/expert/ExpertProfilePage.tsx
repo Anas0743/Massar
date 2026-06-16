@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
@@ -87,7 +87,7 @@ export function ExpertProfilePage() {
   if (profile.isLoading || tracks.isLoading || sessionTypes.isLoading) return <LoadingState />
 
   return (
-    <form className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
+    <form className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
       <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -186,3 +186,4 @@ export function ExpertProfilePage() {
     </form>
   )
 }
+

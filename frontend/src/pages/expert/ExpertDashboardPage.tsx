@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+﻿import { useQuery } from "@tanstack/react-query"
 import { CalendarClock, CheckCircle2, Clock, Star } from "lucide-react"
 import { LoadingState } from "../../components/LoadingState"
 import { StatCard } from "../../components/StatCard"
@@ -18,7 +18,7 @@ export function ExpertDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="overflow-hidden rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur">
+      <div className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur">
         <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -38,7 +38,7 @@ export function ExpertDashboardPage() {
         <StatCard title="متوسط التقييم" value={profile.data?.rating_average || "جديد"} icon={Star} />
       </div>
 
-      <section className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
+      <section className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-xl font-black">الحجوزات القادمة</h2>
           <ButtonLink to="/expert/bookings" variant="secondary" size="sm">
@@ -47,7 +47,7 @@ export function ExpertDashboardPage() {
         </div>
         <div className="grid gap-3">
           {upcoming.map((booking) => (
-            <div key={booking.id} className="rounded-md bg-paper p-4 ring-1 ring-black/10">
+            <div key={booking.id} className="rounded-3xl bg-paper p-4 ring-1 ring-black/10">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-black">{booking.student_name}</p>
@@ -64,3 +64,4 @@ export function ExpertDashboardPage() {
     </div>
   )
 }
+

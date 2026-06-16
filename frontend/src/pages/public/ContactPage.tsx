@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Mail, MessageCircle, Phone } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -37,7 +37,7 @@ export function ContactPage() {
           <SectionHeader eyebrow="تواصل معنا" title="رسالة واحدة تكفي لبدء الحديث" />
         </div>
         <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-          <form className="rounded-md border border-black/10 bg-white/90 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
+          <form className="masar-soft-panel rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="الاسم" error={form.formState.errors.name?.message}>
                 <Input {...form.register("name")} />
@@ -66,12 +66,15 @@ export function ContactPage() {
               { icon: Phone, title: "الهاتف", text: "+962 7 0000 0000" },
               { icon: MessageCircle, title: "طلبات الشراكة", text: "للجامعات والمجتمعات التقنية." },
             ].map((item) => (
-              <div key={item.title} className="rounded-md border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
+              <div key={item.title} className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-primary-500/30 hover:shadow-float">
+                <div className="absolute -left-12 -bottom-12 h-28 w-28 rounded-full bg-primary-500/10 blur-3xl transition group-hover:bg-primary-500/18" />
                 <span className="grid h-11 w-11 place-items-center rounded-full bg-primary-100 text-primary-700">
                   <item.icon className="h-5 w-5" />
                 </span>
                 <h2 className="mt-4 font-black">{item.title}</h2>
-                <p className="mt-2 text-sm text-slate-600">{item.text}</p>
+                <p className="mt-2 text-sm text-slate-600" dir={item.title === "الهاتف" || item.title === "البريد" ? "ltr" : "rtl"}>
+                  {item.text}
+                </p>
               </div>
             ))}
           </div>
@@ -80,3 +83,4 @@ export function ContactPage() {
     </section>
   )
 }
+
