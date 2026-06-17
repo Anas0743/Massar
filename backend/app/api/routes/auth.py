@@ -2,19 +2,25 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
+from app.core.rate_limit import rate_limit
 from app.core.security import create_access_token, get_password_hash, verify_password
 from app.models.entities import StudentProfile, User
 from app.models.enums import UserRole
-from app.schemas.schemas import LoginRequest, MeResponse, RegisterRequest, Token, UserRead
+from app.schemas.schemas import ChangePasswordRequest, LoginRequest, MeResponse, RegisterRequest, Token, UserRead
 from app.services.serializers import serialize_expert, student_profile_or_none
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> Token:
+def register(
+    payload: RegisterRequest,
+    _: None = Depends(rate_limit(settings.REGISTER_RATE_LIMIT, "auth:register")),
+    db: Session = Depends(get_db),
+) -> Token:
     if payload.role != UserRole.STUDENT:
         raise HTTPException(status_code=400, detail="Public registration is available for students only")
 
@@ -37,19 +43,23 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> Token:
 
     db.commit()
     db.refresh(user)
-    token = create_access_token(user.id)
+    token = create_access_token(user.id, user.token_version)
     return Token(access_token=token, user=UserRead.model_validate(user))
 
 
 @router.post("/login", response_model=Token)
-def login(payload: LoginRequest, db: Session = Depends(get_db)) -> Token:
+def login(
+    payload: LoginRequest,
+    _: None = Depends(rate_limit(settings.LOGIN_RATE_LIMIT, "auth:login")),
+    db: Session = Depends(get_db),
+) -> Token:
     user = db.scalars(select(User).where(User.email == payload.email.lower())).first()
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is disabled")
 
-    token = create_access_token(user.id)
+    token = create_access_token(user.id, user.token_version)
     return Token(access_token=token, user=UserRead.model_validate(user))
 
 
@@ -63,8 +73,28 @@ def me(current_user: User = Depends(get_current_user), db: Session = Depends(get
 
 
 @router.post("/logout")
-def logout(_: User = Depends(get_current_user)) -> dict[str, str]:
-    return {"message": "Token invalidation is handled on the frontend in this MVP"}
+def logout(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> dict[str, str]:
+    current_user.token_version += 1
+    db.commit()
+    return {"message": "Logged out successfully"}
+
+
+@router.post("/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    _: None = Depends(rate_limit(settings.PASSWORD_CHANGE_RATE_LIMIT, "auth:change-password")),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    if not verify_password(payload.current_password, current_user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
+    if verify_password(payload.new_password, current_user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="New password must be different")
+
+    current_user.password_hash = get_password_hash(payload.new_password)
+    current_user.token_version += 1
+    db.commit()
+    return {"message": "Password updated successfully"}
 
 
 @router.get("/admin-check")

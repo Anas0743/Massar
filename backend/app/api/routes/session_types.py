@@ -13,10 +13,19 @@ router = APIRouter(tags=["session-types"])
 
 @router.get("/session-types", response_model=list[SessionTypeRead])
 def list_session_types(db: Session = Depends(get_db), include_inactive: bool = False) -> list[SessionTypeRead]:
+    if include_inactive:
+        raise HTTPException(status_code=403, detail="Inactive session types are available from the admin API only")
     statement = select(SessionType).order_by(SessionType.name)
-    if not include_inactive:
-        statement = statement.where(SessionType.is_active.is_(True))
+    statement = statement.where(SessionType.is_active.is_(True))
     return [SessionTypeRead.model_validate(session_type) for session_type in db.scalars(statement).all()]
+
+
+@router.get("/admin/session-types", response_model=list[SessionTypeRead])
+def admin_list_session_types(
+    _: User = Depends(require_roles(UserRole.ADMIN)),
+    db: Session = Depends(get_db),
+) -> list[SessionTypeRead]:
+    return [SessionTypeRead.model_validate(session_type) for session_type in db.scalars(select(SessionType).order_by(SessionType.name)).all()]
 
 
 @router.post("/admin/session-types", response_model=SessionTypeRead, status_code=status.HTTP_201_CREATED)

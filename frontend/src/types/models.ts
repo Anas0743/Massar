@@ -43,6 +43,11 @@ export interface Availability {
   is_active: boolean
 }
 
+export interface AvailableSlot {
+  starts_at: string
+  ends_at: string
+}
+
 export interface Expert {
   id: number
   name: string

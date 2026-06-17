@@ -36,7 +36,7 @@ const footerLinks = [
 
 const footerTrustItems = [
   { label: "حجوزات منظمة", icon: CalendarCheck2 },
-  { label: "دفع يدوي في MVP", icon: CreditCard },
+  { label: "دفع يدوي موثق", icon: CreditCard },
   { label: "خبراء بموافقة الإدارة", icon: ShieldCheck },
 ]
 
@@ -165,7 +165,7 @@ export function PublicLayout() {
               معلومة مهمة
             </p>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              الدفع في نسخة MVP يدوي، مع مساحة جاهزة لاحقًا للربط مع Stripe أو CliQ أو Zain Cash.
+              الدفع حاليًا يدوي، مع متابعة حالة الدفع من لوحة الإدارة ومساحة جاهزة للربط الإلكتروني لاحقًا.
             </p>
           </div>
 
@@ -260,7 +260,7 @@ export function PublicLayout() {
               </Link>
               <span className="inline-flex items-center gap-2 rounded-full bg-paper px-3 py-1.5 text-slate-600 ring-1 ring-black/10">
                 <BookOpenCheck className="h-4 w-4 text-signal" />
-                MVP جاهز للتطوير
+                جاهز للتطوير المستمر
               </span>
             </div>
           </div>

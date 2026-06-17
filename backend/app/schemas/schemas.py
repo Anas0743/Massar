@@ -46,6 +46,11 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=128)
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -198,6 +203,11 @@ class BookingCreate(BaseModel):
     scheduled_at: datetime
     student_message: str | None = Field(default=None, max_length=2000)
     payment_method: PaymentMethod = PaymentMethod.MANUAL
+
+
+class AvailableSlotRead(BaseModel):
+    starts_at: datetime
+    ends_at: datetime
 
 
 class BookingStatusUpdate(BaseModel):

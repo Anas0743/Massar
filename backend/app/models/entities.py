@@ -3,6 +3,7 @@ from datetime import datetime, time
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Column,
     DateTime,
     Enum,
@@ -62,6 +63,7 @@ class User(TimestampMixin, Base):
     phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    token_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
 
     student_profile: Mapped["StudentProfile | None"] = relationship(
         back_populates="user",
@@ -121,6 +123,12 @@ class ExpertProfile(Base):
 
     user: Mapped[User] = relationship(back_populates="expert_profile")
 
+    __table_args__ = (
+        CheckConstraint("years_of_experience >= 0", name="ck_expert_profiles_years_nonnegative"),
+        CheckConstraint("hourly_price >= 0", name="ck_expert_profiles_hourly_price_nonnegative"),
+        CheckConstraint("session_duration_minutes > 0", name="ck_expert_profiles_session_duration_positive"),
+    )
+
 
 class Track(Base):
     __tablename__ = "tracks"
@@ -144,6 +152,11 @@ class SessionType(Base):
     base_price: Mapped[float] = mapped_column(Float, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+    __table_args__ = (
+        CheckConstraint("duration_minutes >= 15", name="ck_session_types_duration_minimum"),
+        CheckConstraint("base_price >= 0", name="ck_session_types_base_price_nonnegative"),
+    )
+
 
 class Availability(Base):
     __tablename__ = "availability"
@@ -157,6 +170,8 @@ class Availability(Base):
 
     __table_args__ = (
         UniqueConstraint("expert_id", "day_of_week", "start_time", "end_time", name="uq_expert_availability"),
+        CheckConstraint("day_of_week >= 0 AND day_of_week <= 6", name="ck_availability_day_of_week_range"),
+        CheckConstraint("end_time > start_time", name="ck_availability_time_order"),
     )
 
 
@@ -198,6 +213,11 @@ class Booking(TimestampMixin, Base):
         uselist=False,
     )
 
+    __table_args__ = (
+        CheckConstraint("duration_minutes > 0", name="ck_bookings_duration_positive"),
+        CheckConstraint("price >= 0", name="ck_bookings_price_nonnegative"),
+    )
+
 
 class SessionNote(Base):
     __tablename__ = "session_notes"
@@ -230,6 +250,10 @@ class Review(Base):
     student: Mapped[User] = relationship(foreign_keys=[student_id])
     expert: Mapped[User] = relationship(foreign_keys=[expert_id])
 
+    __table_args__ = (
+        CheckConstraint("rating >= 1 AND rating <= 5", name="ck_reviews_rating_range"),
+    )
+
 
 class FAQ(Base):
     __tablename__ = "faqs"
@@ -239,6 +263,10 @@ class FAQ(Base):
     answer: Mapped[str] = mapped_column(Text, nullable=False)
     order: Mapped[int] = mapped_column(Integer, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    __table_args__ = (
+        CheckConstraint('"order" >= 0', name="ck_faqs_order_nonnegative"),
+    )
 
 
 class ContactMessage(Base):
@@ -275,3 +303,7 @@ class Payment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     booking: Mapped[Booking] = relationship(back_populates="payment")
+
+    __table_args__ = (
+        CheckConstraint("amount >= 0", name="ck_payments_amount_nonnegative"),
+    )

@@ -1,6 +1,6 @@
 # مسار - Masar
 
-منصة SaaS/Marketplace لإرشاد واستشارات طلاب وخريجي أقسام IT. الـ MVP يحتوي على طلاب، خبراء، أدمن، حجوزات، توفر أسبوعي، ملخصات جلسات، تقييمات، دفع يدوي، ومحتوى أساسي قابل للإدارة.
+منصة SaaS/Marketplace لإرشاد واستشارات طلاب وخريجي أقسام IT. الإصدار الحالي يحتوي على طلاب، خبراء، أدمن، حجوزات، توفر أسبوعي، ملخصات جلسات، تقييمات، دفع يدوي، ومحتوى أساسي قابل للإدارة.
 
 ## Stack
 
@@ -57,6 +57,40 @@ docker compose up --build
 
 إذا كان Docker Desktop مغلقًا، افتحه أولًا وتأكد أن `docker info` يعرض قسم `Server` قبل تشغيل الأمر.
 
+## التشغيل الإنتاجي عبر Docker
+
+ملف `docker-compose.yml` مخصص للتطوير فقط لأنه يشغل seed تلقائيًا ويفعل `--reload`.
+للإنتاج استخدم `docker-compose.prod.yml`.
+
+1. أنشئ ملف بيئة إنتاج من المثال:
+
+```bash
+cp .env.production.example .env.production
+```
+
+2. عدل القيم داخل `.env.production`، خصوصًا:
+
+- `POSTGRES_PASSWORD`
+- `DATABASE_URL`
+- `SECRET_KEY` بقيمة عشوائية قوية لا تقل عن 32 حرفًا
+- `BACKEND_CORS_ORIGINS` بدومين الواجهة الحقيقي
+- إعدادات rate limiting مثل `LOGIN_RATE_LIMIT` و`PASSWORD_CHANGE_RATE_LIMIT` و`BOOKING_RATE_LIMIT`
+- `ADMIN_EMAIL` و`ADMIN_PASSWORD` لإنشاء أول أدمن
+
+3. شغل الخدمات:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+```
+
+4. أنشئ أول حساب أدمن مرة واحدة بعد تشغيل قاعدة البيانات والباكند:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.prod.yml run --rm backend python -m app.bootstrap_admin
+```
+
+في إعداد الإنتاج الافتراضي، الواجهة تخدم التطبيق عبر Nginx، وطلبات API تمر عبر `/api` إلى الباكند داخليًا. قاعدة البيانات لا تُفتح كمنفذ عام.
+
 ## التشغيل المحلي بدون Docker
 
 شغل PostgreSQL ثم أنشئ `backend/.env` من `backend/.env.example`.
@@ -100,16 +134,17 @@ Password123!
 
 ## API مختصر
 
-- Auth: `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
-- Experts: `GET /experts`, `GET /experts/{id}`, `PUT /experts/profile`, `GET /expert/bookings`
+- Auth: `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password`
+- Experts: `GET /experts`, `GET /experts/{id}`, `GET /experts/{id}/available-slots`, `PUT /experts/profile`, `GET /expert/bookings`
 - Bookings: `POST /bookings`, `GET /student/bookings`, `GET /bookings/{id}`, `PUT /bookings/{id}/status`
 - Notes & Reviews: `POST /bookings/{id}/session-note`, `POST /bookings/{id}/review`
 - Admin: `GET /admin/stats`, `GET /admin/users`, `GET /admin/experts`, `GET /admin/bookings`
 - Content: `GET /faqs`, `POST /contact`, و CRUD للأسئلة الشائعة من الأدمن.
 
-## ملاحظات MVP
+## ملاحظات تشغيلية
 
-- الدفع يدوي عبر `payments.status` و`payment_method=manual`.
+- الدفع يدوي عبر `payments.status` و`payment_method=manual` مع قابلية الربط لاحقًا بمزود دفع.
+- توجد حماية rate limiting مبدئية داخل الذاكرة للمسارات الحساسة. عند تشغيل أكثر من instance يجب نقلها إلى Redis أو مزود مركزي.
 - التسجيل العام مخصص للطلاب فقط.
 - حسابات الخبراء ينشئها الأدمن من `/admin/experts`، ويمكن تركها بانتظار المراجعة أو اعتمادها فورًا.
 - النصوص العربية بدأت من `frontend/src/i18n/ar.ts` مع بقاء بعض نصوص الصفحات داخل المكونات لتسهيل التطوير السريع، ويمكن فصلها لاحقًا بالكامل.

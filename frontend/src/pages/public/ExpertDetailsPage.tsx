@@ -1,15 +1,16 @@
 ﻿import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { BadgeCheck, CalendarClock, Clock, Code2, ExternalLink, Star, UserRoundCheck, WalletCards } from "lucide-react"
+import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
 import { z } from "zod"
 import { BookingStatusBadge } from "../../components/StatusBadge"
 import { Button, ButtonLink } from "../../components/ui/Button"
-import { Field, Select, Textarea, Input } from "../../components/ui/Field"
+import { Field, Select, Textarea } from "../../components/ui/Field"
 import { LoadingState } from "../../components/LoadingState"
-import { dayNames, formatCurrency, toDateTimeLocalValue } from "../../lib/utils"
+import { dayNames, formatCurrency, formatDateTime } from "../../lib/utils"
 import { useAuth } from "../../hooks/useAuth"
 import { publicAPI, studentAPI } from "../../services/api"
 
@@ -20,6 +21,10 @@ const bookingSchema = z.object({
 })
 
 type BookingForm = z.infer<typeof bookingSchema>
+
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat("ar-JO", { timeStyle: "short" }).format(new Date(value))
+}
 
 export function ExpertDetailsPage() {
   const { id } = useParams()
@@ -36,18 +41,28 @@ export function ExpertDetailsPage() {
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       session_type_id: "0",
-      scheduled_at: toDateTimeLocalValue(),
+      scheduled_at: "",
       student_message: "",
     },
   })
   const selectedSessionId = useWatch({ control: form.control, name: "session_type_id" })
+  const selectedSessionNumber = Number(selectedSessionId)
+  const availableSlots = useQuery({
+    queryKey: ["expert-available-slots", id, selectedSessionNumber],
+    queryFn: () => publicAPI.availableSlots(id!, selectedSessionNumber),
+    enabled: Boolean(id) && selectedSessionNumber > 0,
+  })
+
+  useEffect(() => {
+    form.setValue("scheduled_at", "")
+  }, [form, selectedSessionId])
 
   const createBooking = useMutation({
     mutationFn: (values: BookingForm) =>
       studentAPI.createBooking({
         expert_id: Number(id),
         session_type_id: Number(values.session_type_id),
-        scheduled_at: new Date(values.scheduled_at).toISOString(),
+        scheduled_at: values.scheduled_at,
         student_message: values.student_message,
         payment_method: "manual",
       }),
@@ -85,7 +100,7 @@ export function ExpertDetailsPage() {
     )
   }
 
-  const selectedSession = expert.data.session_types.find((item) => item.id === Number(selectedSessionId))
+  const selectedSession = expert.data.session_types.find((item) => item.id === selectedSessionNumber)
 
   return (
     <section className="masar-page-shell masar-grain relative -mt-20 overflow-hidden pb-16 pt-32">
@@ -210,7 +225,7 @@ export function ExpertDetailsPage() {
             <div className="mb-5 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-black text-white">احجز جلسة</h2>
-                <p className="mt-1 text-sm text-white/62">خطوات قليلة، والدفع يدوي في الـ MVP.</p>
+                <p className="mt-1 text-sm text-white/62">خطوات قليلة، وتأكيد الدفع يتم يدويًا.</p>
               </div>
               <span className="grid h-11 w-11 place-items-center rounded-full bg-white/10 text-primary-500 ring-1 ring-white/10">
                 <Clock className="h-5 w-5" />
@@ -233,8 +248,26 @@ export function ExpertDetailsPage() {
                 </Select>
               </Field>
               <Field label="وقت الجلسة" error={form.formState.errors.scheduled_at?.message}>
-                <Input type="datetime-local" {...form.register("scheduled_at")} />
+                <Select {...form.register("scheduled_at")} disabled={!selectedSession || availableSlots.isLoading}>
+                  <option value="">
+                    {!selectedSession
+                      ? "اختر نوع الجلسة أولًا"
+                      : availableSlots.isLoading
+                        ? "جاري تحميل المواعيد..."
+                        : "اختر موعدًا متاحًا"}
+                  </option>
+                  {availableSlots.data?.map((slot) => (
+                    <option key={slot.starts_at} value={slot.starts_at}>
+                      {formatDateTime(slot.starts_at)} - {formatTime(slot.ends_at)}
+                    </option>
+                  ))}
+                </Select>
               </Field>
+              {selectedSession && !availableSlots.isLoading && !availableSlots.data?.length ? (
+                <p className="rounded-3xl bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-700">
+                  لا توجد مواعيد متاحة لهذا النوع خلال الأيام القادمة.
+                </p>
+              ) : null}
               <Field label="رسالة قصيرة عن المشكلة" error={form.formState.errors.student_message?.message}>
                 <Textarea placeholder="مثال: أريد خطة لتجهيز GitHub والتقديم على تدريب Frontend..." {...form.register("student_message")} />
               </Field>

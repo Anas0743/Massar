@@ -6,7 +6,8 @@ from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
 from app.models.entities import Availability, ExpertProfile, Review, SessionType, Track, User, expert_session_types, expert_tracks
 from app.models.enums import UserRole
-from app.schemas.schemas import AvailabilityCreate, AvailabilityRead, ExpertProfileUpdate, ExpertRead, ReviewRead
+from app.schemas.schemas import AvailableSlotRead, AvailabilityCreate, AvailabilityRead, ExpertProfileUpdate, ExpertRead, ReviewRead
+from app.services.booking_slots import generate_available_slots
 from app.services.serializers import get_expert_availability, serialize_expert, serialize_review
 
 router = APIRouter(tags=["experts"])
@@ -146,6 +147,36 @@ def get_public_availability(expert_id: int, db: Session = Depends(get_db)) -> li
     if not user or user.role != UserRole.EXPERT:
         raise HTTPException(status_code=404, detail="Expert not found")
     return get_expert_availability(db, expert_id)
+
+
+@router.get("/experts/{expert_id}/available-slots", response_model=list[AvailableSlotRead])
+def get_available_slots(
+    expert_id: int,
+    session_type_id: int = Query(..., gt=0),
+    days: int = Query(default=14, ge=1, le=60),
+    db: Session = Depends(get_db),
+) -> list[AvailableSlotRead]:
+    user = db.get(User, expert_id)
+    if not user or user.role != UserRole.EXPERT or not user.is_active or not user.expert_profile:
+        raise HTTPException(status_code=404, detail="Expert not found")
+    if not user.expert_profile.is_approved:
+        raise HTTPException(status_code=404, detail="Expert not found")
+
+    session_type = db.get(SessionType, session_type_id)
+    if not session_type or not session_type.is_active:
+        raise HTTPException(status_code=404, detail="Session type not found")
+
+    offered_session = db.execute(
+        select(expert_session_types.c.session_type_id).where(
+            expert_session_types.c.expert_id == expert_id,
+            expert_session_types.c.session_type_id == session_type_id,
+        )
+    ).first()
+    if offered_session is None:
+        raise HTTPException(status_code=400, detail="This expert does not offer the selected session type")
+
+    slots = generate_available_slots(db, expert_id, session_type.duration_minutes, days)
+    return [AvailableSlotRead(starts_at=starts_at, ends_at=ends_at) for starts_at, ends_at in slots]
 
 
 @router.get("/experts/{expert_id}/reviews", response_model=list[ReviewRead])

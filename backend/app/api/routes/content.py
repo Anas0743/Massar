@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import require_roles
+from app.core.rate_limit import rate_limit
 from app.models.entities import ContactMessage, FAQ, User
 from app.models.enums import UserRole
 from app.schemas.schemas import ContactMessageCreate, ContactMessageRead, FAQCreate, FAQRead, FAQUpdate
@@ -13,14 +15,19 @@ router = APIRouter(tags=["content"])
 
 @router.get("/faqs", response_model=list[FAQRead])
 def list_faqs(db: Session = Depends(get_db), include_inactive: bool = False) -> list[FAQRead]:
+    if include_inactive:
+        raise HTTPException(status_code=403, detail="Inactive FAQs are available from the admin API only")
     statement = select(FAQ).order_by(FAQ.order, FAQ.id)
-    if not include_inactive:
-        statement = statement.where(FAQ.is_active.is_(True))
+    statement = statement.where(FAQ.is_active.is_(True))
     return [FAQRead.model_validate(faq) for faq in db.scalars(statement).all()]
 
 
 @router.post("/contact", response_model=ContactMessageRead, status_code=status.HTTP_201_CREATED)
-def create_contact_message(payload: ContactMessageCreate, db: Session = Depends(get_db)) -> ContactMessageRead:
+def create_contact_message(
+    payload: ContactMessageCreate,
+    _: None = Depends(rate_limit(settings.CONTACT_RATE_LIMIT, "content:contact")),
+    db: Session = Depends(get_db),
+) -> ContactMessageRead:
     message = ContactMessage(**payload.model_dump())
     db.add(message)
     db.commit()

@@ -34,6 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timer)
   }, [refresh])
 
+  useEffect(() => {
+    const handleExpiredSession = () => setMe(null)
+    window.addEventListener("masar:auth-expired", handleExpiredSession)
+
+    return () => window.removeEventListener("masar:auth-expired", handleExpiredSession)
+  }, [])
+
   const login = useCallback(
     async (payload: { email: string; password: string }) => {
       const data = await authAPI.login(payload)
@@ -55,6 +62,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const logout = useCallback(() => {
+    const token = localStorage.getItem(TOKEN_KEY)
+    if (token) {
+      void authAPI.logout(token).catch(() => undefined)
+    }
     localStorage.removeItem(TOKEN_KEY)
     setMe(null)
   }, [])

@@ -4,8 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
+from app.core.rate_limit import rate_limit
 from app.models.entities import Booking, ExpertProfile, Payment, Review, SessionNote, SessionType, User, expert_session_types
 from app.models.enums import BookingStatus, PaymentStatus, UserRole
 from app.schemas.schemas import (
@@ -18,6 +20,7 @@ from app.schemas.schemas import (
     SessionNoteCreate,
     SessionNoteRead,
 )
+from app.services.booking_slots import lock_expert_booking_calendar, validate_booking_slot
 from app.services.serializers import recalculate_expert_rating, serialize_booking, serialize_review
 
 router = APIRouter(tags=["bookings"])
@@ -43,6 +46,7 @@ def ensure_booking_access(user: User, booking: Booking) -> None:
 @router.post("/bookings", response_model=BookingRead, status_code=status.HTTP_201_CREATED)
 def create_booking(
     payload: BookingCreate,
+    _: None = Depends(rate_limit(settings.BOOKING_RATE_LIMIT, "bookings:create")),
     current_user: User = Depends(require_roles(UserRole.STUDENT)),
     db: Session = Depends(get_db),
 ) -> BookingRead:
@@ -57,8 +61,11 @@ def create_booking(
         raise HTTPException(status_code=404, detail="Session type not found")
 
     scheduled_at = payload.scheduled_at
+    if scheduled_at.tzinfo is None:
+        raise HTTPException(status_code=400, detail="Booking time must include a timezone")
+    scheduled_at = scheduled_at.astimezone(UTC)
     now = datetime.now(UTC)
-    if scheduled_at.tzinfo is not None and scheduled_at < now:
+    if scheduled_at < now:
         raise HTTPException(status_code=400, detail="Cannot book a session in the past")
 
     offered_session = db.execute(
@@ -73,6 +80,11 @@ def create_booking(
     custom_price = offered_session[0]
     price = custom_price if custom_price is not None else session_type.base_price or expert.expert_profile.hourly_price
     duration = session_type.duration_minutes or expert.expert_profile.session_duration_minutes
+    lock_expert_booking_calendar(db, payload.expert_id)
+    try:
+        validate_booking_slot(db, payload.expert_id, scheduled_at, duration)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     booking = Booking(
         student_id=current_user.id,

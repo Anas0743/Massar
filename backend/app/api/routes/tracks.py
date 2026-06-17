@@ -13,10 +13,19 @@ router = APIRouter(tags=["tracks"])
 
 @router.get("/tracks", response_model=list[TrackRead])
 def list_tracks(db: Session = Depends(get_db), include_inactive: bool = False) -> list[TrackRead]:
+    if include_inactive:
+        raise HTTPException(status_code=403, detail="Inactive tracks are available from the admin API only")
     statement = select(Track).order_by(Track.name)
-    if not include_inactive:
-        statement = statement.where(Track.is_active.is_(True))
+    statement = statement.where(Track.is_active.is_(True))
     return [TrackRead.model_validate(track) for track in db.scalars(statement).all()]
+
+
+@router.get("/admin/tracks", response_model=list[TrackRead])
+def admin_list_tracks(
+    _: User = Depends(require_roles(UserRole.ADMIN)),
+    db: Session = Depends(get_db),
+) -> list[TrackRead]:
+    return [TrackRead.model_validate(track) for track in db.scalars(select(Track).order_by(Track.name)).all()]
 
 
 @router.post("/admin/tracks", response_model=TrackRead, status_code=status.HTTP_201_CREATED)

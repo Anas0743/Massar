@@ -1,6 +1,7 @@
 import axios from "axios"
 import type {
   AdminStats,
+  AvailableSlot,
   Availability,
   Booking,
   BookingStatus,
@@ -32,6 +33,17 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+api.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      localStorage.removeItem(TOKEN_KEY)
+      window.dispatchEvent(new Event("masar:auth-expired"))
+    }
+    return Promise.reject(error)
+  },
+)
+
 export interface TokenResponse {
   access_token: string
   token_type: string
@@ -44,6 +56,16 @@ export const authAPI = {
   login: (payload: { email: string; password: string }) =>
     api.post<TokenResponse>("/auth/login", payload).then((res) => res.data),
   me: () => api.get<MeResponse>("/auth/me").then((res) => res.data),
+  logout: (token?: string) =>
+    api
+      .post<{ message: string }>(
+        "/auth/logout",
+        undefined,
+        token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
+      )
+      .then((res) => res.data),
+  changePassword: (payload: { current_password: string; new_password: string }) =>
+    api.post<{ message: string }>("/auth/change-password", payload).then((res) => res.data),
 }
 
 export const publicAPI = {
@@ -52,6 +74,12 @@ export const publicAPI = {
   experts: (params?: { search?: string; track?: string; max_price?: number; min_rating?: number }) =>
     api.get<Expert[]>("/experts", { params }).then((res) => res.data),
   expert: (id: string | number) => api.get<Expert>(`/experts/${id}`).then((res) => res.data),
+  availableSlots: (id: string | number, sessionTypeId: number, days = 14) =>
+    api
+      .get<AvailableSlot[]>(`/experts/${id}/available-slots`, {
+        params: { session_type_id: sessionTypeId, days },
+      })
+      .then((res) => res.data),
   expertReviews: (id: string | number) => api.get<Review[]>(`/experts/${id}/reviews`).then((res) => res.data),
   faqs: () => api.get<FAQ[]>("/faqs").then((res) => res.data),
   contact: (payload: { name: string; email: string; phone?: string; message: string }) =>
@@ -121,12 +149,11 @@ export const adminAPI = {
     api.get<Booking[]>("/admin/bookings", { params }).then((res) => res.data),
   updatePaymentStatus: (id: number, status: PaymentStatus, transaction_reference?: string) =>
     api.put<Booking>(`/admin/bookings/${id}/payment-status`, { status, transaction_reference }).then((res) => res.data),
-  tracks: () => api.get<Track[]>("/tracks", { params: { include_inactive: true } }).then((res) => res.data),
+  tracks: () => api.get<Track[]>("/admin/tracks").then((res) => res.data),
   createTrack: (payload: Omit<Track, "id">) => api.post<Track>("/admin/tracks", payload).then((res) => res.data),
   updateTrack: (id: number, payload: Partial<Track>) => api.put<Track>(`/admin/tracks/${id}`, payload).then((res) => res.data),
   deleteTrack: (id: number) => api.delete(`/admin/tracks/${id}`),
-  sessionTypes: () =>
-    api.get<SessionType[]>("/session-types", { params: { include_inactive: true } }).then((res) => res.data),
+  sessionTypes: () => api.get<SessionType[]>("/admin/session-types").then((res) => res.data),
   createSessionType: (payload: Omit<SessionType, "id" | "custom_price">) =>
     api.post<SessionType>("/admin/session-types", payload).then((res) => res.data),
   updateSessionType: (id: number, payload: Partial<SessionType>) =>

@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
+import { ChangePasswordCard } from "../../components/ChangePasswordCard"
 import { LoadingState } from "../../components/LoadingState"
 import { Button } from "../../components/ui/Button"
 import { Field, Input, Textarea } from "../../components/ui/Field"
@@ -87,6 +88,7 @@ export function ExpertProfilePage() {
   if (profile.isLoading || tracks.isLoading || sessionTypes.isLoading) return <LoadingState />
 
   return (
+    <div className="space-y-6">
     <form className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
       <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -184,6 +186,8 @@ export function ExpertProfilePage() {
         حفظ ملف الخبير
       </Button>
     </form>
+    <ChangePasswordCard />
+    </div>
   )
 }
 

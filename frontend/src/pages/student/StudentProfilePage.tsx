@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
+import { ChangePasswordCard } from "../../components/ChangePasswordCard"
 import { LoadingState } from "../../components/LoadingState"
 import { Button } from "../../components/ui/Button"
 import { Field, Input, Textarea } from "../../components/ui/Field"
@@ -74,6 +75,7 @@ export function StudentProfilePage() {
   if (profile.isLoading) return <LoadingState />
 
   return (
+    <div className="space-y-6">
     <form className="masar-soft-panel overflow-hidden rounded-3xl border border-black/10 p-6 shadow-float backdrop-blur" onSubmit={form.handleSubmit((values) => update.mutate(values))}>
       <div className="masar-progress -mx-6 -mt-6 mb-6 h-1.5" />
       <h1 className="text-2xl font-black">ملفي الشخصي</h1>
@@ -119,6 +121,8 @@ export function StudentProfilePage() {
         حفظ التغييرات
       </Button>
     </form>
+    <ChangePasswordCard />
+    </div>
   )
 }
 
