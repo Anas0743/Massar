@@ -32,8 +32,11 @@ import { ExpertDetailsPage } from "./pages/public/ExpertDetailsPage"
 import { ExpertsPage } from "./pages/public/ExpertsPage"
 import { HomePage } from "./pages/public/HomePage"
 import { LoginPage } from "./pages/public/LoginPage"
+import { PrivacyPage } from "./pages/public/PrivacyPage"
+import { RefundPolicyPage } from "./pages/public/RefundPolicyPage"
 import { RegisterPage } from "./pages/public/RegisterPage"
 import { SessionsPage } from "./pages/public/SessionsPage"
+import { TermsPage } from "./pages/public/TermsPage"
 import { TracksPage } from "./pages/public/TracksPage"
 import { BookingDetailsPage } from "./pages/student/BookingDetailsPage"
 import { StudentBookingsPage } from "./pages/student/StudentBookingsPage"
@@ -74,6 +77,9 @@ function App() {
         <RouterRoute path="/sessions" element={<SessionsPage />} />
         <RouterRoute path="/about" element={<AboutPage />} />
         <RouterRoute path="/contact" element={<ContactPage />} />
+        <RouterRoute path="/privacy" element={<PrivacyPage />} />
+        <RouterRoute path="/terms" element={<TermsPage />} />
+        <RouterRoute path="/refund-policy" element={<RefundPolicyPage />} />
         <RouterRoute path="/login" element={<LoginPage />} />
         <RouterRoute path="/register" element={<RegisterPage />} />
       </RouterRoute>

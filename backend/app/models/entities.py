@@ -9,6 +9,7 @@ from sqlalchemy import (
     Enum,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Table,
@@ -179,8 +180,8 @@ class Booking(TimestampMixin, Base):
     __tablename__ = "bookings"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    student_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    student_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True)
+    expert_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True)
     session_type_id: Mapped[int] = mapped_column(ForeignKey("session_types.id", ondelete="RESTRICT"))
     scheduled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -194,28 +195,29 @@ class Booking(TimestampMixin, Base):
     student_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     expert_message: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    student: Mapped[User] = relationship(back_populates="student_bookings", foreign_keys=[student_id])
-    expert: Mapped[User] = relationship(back_populates="expert_bookings", foreign_keys=[expert_id])
+    student: Mapped["User | None"] = relationship(back_populates="student_bookings", foreign_keys=[student_id])
+    expert: Mapped["User | None"] = relationship(back_populates="expert_bookings", foreign_keys=[expert_id])
     session_type: Mapped[SessionType] = relationship()
     session_note: Mapped["SessionNote | None"] = relationship(
         back_populates="booking",
-        cascade="all, delete-orphan",
         uselist=False,
     )
     review: Mapped["Review | None"] = relationship(
         back_populates="booking",
-        cascade="all, delete-orphan",
         uselist=False,
     )
     payment: Mapped["Payment | None"] = relationship(
         back_populates="booking",
-        cascade="all, delete-orphan",
         uselist=False,
     )
 
     __table_args__ = (
         CheckConstraint("duration_minutes > 0", name="ck_bookings_duration_positive"),
         CheckConstraint("price >= 0", name="ck_bookings_price_nonnegative"),
+        Index("ix_bookings_status", "status"),
+        Index("ix_bookings_scheduled_at", "scheduled_at"),
+        Index("ix_bookings_expert_scheduled_at", "expert_id", "scheduled_at"),
+        Index("ix_bookings_student_scheduled_at", "student_id", "scheduled_at"),
     )
 
 
@@ -223,7 +225,7 @@ class SessionNote(Base):
     __tablename__ = "session_notes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), unique=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="RESTRICT"), unique=True)
     summary: Mapped[str] = mapped_column(Text, nullable=False)
     strengths: Mapped[str | None] = mapped_column(Text, nullable=True)
     weaknesses: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -239,16 +241,16 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), unique=True)
-    student_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="RESTRICT"), unique=True)
+    student_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True)
+    expert_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True)
     rating: Mapped[int] = mapped_column(Integer, nullable=False)
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     booking: Mapped[Booking] = relationship(back_populates="review")
-    student: Mapped[User] = relationship(foreign_keys=[student_id])
-    expert: Mapped[User] = relationship(foreign_keys=[expert_id])
+    student: Mapped["User | None"] = relationship(foreign_keys=[student_id])
+    expert: Mapped["User | None"] = relationship(foreign_keys=[expert_id])
 
     __table_args__ = (
         CheckConstraint("rating >= 1 AND rating <= 5", name="ck_reviews_rating_range"),
@@ -288,7 +290,7 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"), unique=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="RESTRICT"), unique=True)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
     currency: Mapped[str] = mapped_column(String(10), default="JOD")
     status: Mapped[PaymentStatus] = mapped_column(
@@ -306,4 +308,5 @@ class Payment(Base):
 
     __table_args__ = (
         CheckConstraint("amount >= 0", name="ck_payments_amount_nonnegative"),
+        Index("ix_payments_status", "status"),
     )

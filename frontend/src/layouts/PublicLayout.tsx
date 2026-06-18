@@ -253,10 +253,16 @@ export function PublicLayout() {
                 حماية حسابات وأدوار واضحة
               </span>
               <Link to="/contact" className="transition hover:text-primary-700">
-                سياسة التواصل والخصوصية
+                سياسة التواصل
               </Link>
-              <Link to="/sessions" className="transition hover:text-primary-700">
-                شروط الحجز
+              <Link to="/privacy" className="transition hover:text-primary-700">
+                الخصوصية
+              </Link>
+              <Link to="/terms" className="transition hover:text-primary-700">
+                الشروط
+              </Link>
+              <Link to="/refund-policy" className="transition hover:text-primary-700">
+                الإلغاء والاسترداد
               </Link>
               <span className="inline-flex items-center gap-2 rounded-full bg-paper px-3 py-1.5 text-slate-600 ring-1 ring-black/10">
                 <BookOpenCheck className="h-4 w-4 text-signal" />

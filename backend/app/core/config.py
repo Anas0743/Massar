@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     API_DOCS_ENABLED: bool | None = None
     PLATFORM_TIMEZONE: str = "Asia/Amman"
     RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_CLEANUP_INTERVAL_SECONDS: int = 60
+    RATE_LIMIT_MAX_KEYS: int = 20000
     LOGIN_RATE_LIMIT: str = "5/minute"
     REGISTER_RATE_LIMIT: str = "3/minute"
     PASSWORD_CHANGE_RATE_LIMIT: str = "5/hour"

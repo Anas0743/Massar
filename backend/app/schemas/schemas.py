@@ -260,8 +260,8 @@ class ReviewCreate(BaseModel):
 class ReviewRead(BaseModel):
     id: int
     booking_id: int
-    student_id: int
-    expert_id: int
+    student_id: int | None
+    expert_id: int | None
     student_name: str | None = None
     rating: int
     comment: str | None
@@ -272,8 +272,8 @@ class ReviewRead(BaseModel):
 
 class BookingRead(BaseModel):
     id: int
-    student_id: int
-    expert_id: int
+    student_id: int | None
+    expert_id: int | None
     session_type_id: int
     scheduled_at: datetime
     duration_minutes: int

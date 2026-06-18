@@ -74,6 +74,7 @@ cp .env.production.example .env.production
 - `DATABASE_URL`
 - `SECRET_KEY` بقيمة عشوائية قوية لا تقل عن 32 حرفًا
 - `BACKEND_CORS_ORIGINS` بدومين الواجهة الحقيقي
+- `APP_DOMAIN` بدومين المنصة عند استخدام HTTPS عبر Caddy
 - إعدادات rate limiting مثل `LOGIN_RATE_LIMIT` و`PASSWORD_CHANGE_RATE_LIMIT` و`BOOKING_RATE_LIMIT`
 - قواعد الحجز والدفع مثل `BOOKING_CANCELLATION_CUTOFF_HOURS` و`REQUIRE_PAYMENT_BEFORE_CONFIRMATION`
 - `ADMIN_EMAIL` و`ADMIN_PASSWORD` لإنشاء أول أدمن
@@ -84,6 +85,12 @@ cp .env.production.example .env.production
 docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
 ```
 
+لتفعيل HTTPS عبر Caddy داخل نفس Compose، اضبط `APP_DOMAIN` واجعل `FRONTEND_PORT` منفذًا محليًا غير 80 مثل `127.0.0.1:8080`، ثم شغل:
+
+```bash
+docker compose --profile https --env-file .env.production -f docker-compose.prod.yml up -d --build
+```
+
 4. أنشئ أول حساب أدمن مرة واحدة بعد تشغيل قاعدة البيانات والباكند:
 
 ```bash
@@ -91,6 +98,14 @@ docker compose --env-file .env.production -f docker-compose.prod.yml run --rm ba
 ```
 
 في إعداد الإنتاج الافتراضي، الواجهة تخدم التطبيق عبر Nginx، وطلبات API تمر عبر `/api` إلى الباكند داخليًا. قاعدة البيانات لا تُفتح كمنفذ عام.
+
+لأخذ نسخة احتياطية يدوية من PostgreSQL على السيرفر:
+
+```bash
+sh scripts/backup_postgres.sh
+```
+
+يمكن ربط السكربت بـ cron يومي ورفع مجلد `backups/postgres` إلى تخزين خارجي آمن.
 
 ## التشغيل المحلي بدون Docker
 
@@ -129,6 +144,7 @@ Password123!
 ## أهم المسارات
 
 - Public: `/`, `/experts`, `/experts/:id`, `/tracks`, `/sessions`, `/about`, `/contact`, `/login`, `/register`
+- Legal: `/privacy`, `/terms`, `/refund-policy`
 - Student: `/dashboard`, `/dashboard/bookings`, `/dashboard/bookings/:id`, `/dashboard/profile`
 - Expert: `/expert/dashboard`, `/expert/bookings`, `/expert/availability`, `/expert/profile`, `/expert/session-notes/:bookingId`
 - Admin: `/admin`, `/admin/experts`, `/admin/students`, `/admin/bookings`, `/admin/tracks`, `/admin/session-types`, `/admin/faqs`
@@ -150,7 +166,7 @@ Password123!
 - الطالب يستطيع إلغاء الحجز قبل الموعد بعدد الساعات المحدد في `BOOKING_CANCELLATION_CUTOFF_HOURS`.
 - لا يمكن إكمال الجلسة أو إضافة ملخصها قبل انتهاء وقتها المجدول.
 - حذف المجالات وأنواع الجلسات من لوحة الأدمن يقوم بأرشفتها/تعطيلها بدل حذفها فعليًا، حفاظًا على البيانات القديمة.
-- توجد حماية rate limiting مبدئية داخل الذاكرة للمسارات الحساسة. عند تشغيل أكثر من instance يجب نقلها إلى Redis أو مزود مركزي.
+- توجد حماية rate limiting مبدئية داخل الذاكرة للمسارات الحساسة مع تنظيف دوري للمفاتيح القديمة. عند تشغيل أكثر من instance يجب نقلها إلى Redis أو مزود مركزي.
 - التسجيل العام مخصص للطلاب فقط.
 - حسابات الخبراء ينشئها الأدمن من `/admin/experts`، ويمكن تركها بانتظار المراجعة أو اعتمادها فورًا.
 - النصوص العربية بدأت من `frontend/src/i18n/ar.ts` مع بقاء بعض نصوص الصفحات داخل المكونات لتسهيل التطوير السريع، ويمكن فصلها لاحقًا بالكامل.

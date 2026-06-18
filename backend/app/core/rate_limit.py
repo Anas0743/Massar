@@ -14,6 +14,7 @@ WINDOW_SECONDS = {
 
 RequestLog = dict[str, deque[float]]
 request_log: RequestLog = defaultdict(deque)
+last_cleanup_at = 0.0
 
 
 def parse_limit(limit: str) -> tuple[int, int]:
@@ -37,6 +38,30 @@ def client_identifier(request: Request) -> str:
     return "unknown"
 
 
+def cleanup_request_log(now: float) -> None:
+    global last_cleanup_at
+    if now - last_cleanup_at < settings.RATE_LIMIT_CLEANUP_INTERVAL_SECONDS:
+        return
+
+    cutoff = now - max(WINDOW_SECONDS.values())
+    for key, bucket in list(request_log.items()):
+        while bucket and bucket[0] < cutoff:
+            bucket.popleft()
+        if not bucket:
+            del request_log[key]
+
+    if len(request_log) > settings.RATE_LIMIT_MAX_KEYS:
+        oldest_keys = sorted(
+            request_log,
+            key=lambda item: request_log[item][0] if request_log[item] else now,
+        )
+        overflow = len(request_log) - settings.RATE_LIMIT_MAX_KEYS
+        for key in oldest_keys[:overflow]:
+            request_log.pop(key, None)
+
+    last_cleanup_at = now
+
+
 def rate_limit(limit: str, scope: str) -> Callable[[Request], None]:
     count, window_seconds = parse_limit(limit)
 
@@ -45,6 +70,7 @@ def rate_limit(limit: str, scope: str) -> Callable[[Request], None]:
             return
 
         now = monotonic()
+        cleanup_request_log(now)
         key = f"{scope}:{client_identifier(request)}"
         bucket = request_log[key]
 

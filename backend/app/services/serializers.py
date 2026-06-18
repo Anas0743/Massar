@@ -96,7 +96,7 @@ def serialize_expert(db: Session, user: User) -> ExpertRead:
 
 
 def serialize_review(db: Session, review: Review) -> ReviewRead:
-    student = db.get(User, review.student_id)
+    student = db.get(User, review.student_id) if review.student_id is not None else None
     return ReviewRead(
         id=review.id,
         booking_id=review.booking_id,
@@ -110,8 +110,8 @@ def serialize_review(db: Session, review: Review) -> ReviewRead:
 
 
 def serialize_booking(db: Session, booking: Booking) -> BookingRead:
-    student = db.get(User, booking.student_id)
-    expert = db.get(User, booking.expert_id)
+    student = db.get(User, booking.student_id) if booking.student_id is not None else None
+    expert = db.get(User, booking.expert_id) if booking.expert_id is not None else None
     expert_profile = expert.expert_profile if expert else None
     session_type = db.get(SessionType, booking.session_type_id)
     payment = db.scalars(select(Payment).where(Payment.booking_id == booking.id)).first()

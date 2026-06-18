@@ -27,6 +27,7 @@ frontend/.env.production
 *.db
 *.sqlite
 *.log
+backups/
 
 # OS / editors
 .DS_Store

@@ -28,6 +28,8 @@ services:
       API_DOCS_ENABLED: ${API_DOCS_ENABLED:-false}
       PLATFORM_TIMEZONE: ${PLATFORM_TIMEZONE:-Asia/Amman}
       RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RATE_LIMIT_CLEANUP_INTERVAL_SECONDS: ${RATE_LIMIT_CLEANUP_INTERVAL_SECONDS:-60}
+      RATE_LIMIT_MAX_KEYS: ${RATE_LIMIT_MAX_KEYS:-20000}
       LOGIN_RATE_LIMIT: ${LOGIN_RATE_LIMIT:-5/minute}
       REGISTER_RATE_LIMIT: ${REGISTER_RATE_LIMIT:-3/minute}
       PASSWORD_CHANGE_RATE_LIMIT: ${PASSWORD_CHANGE_RATE_LIMIT:-5/hour}
@@ -71,5 +73,25 @@ services:
       timeout: 5s
       retries: 5
 
+  proxy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    profiles:
+      - https
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      frontend:
+        condition: service_healthy
+
 volumes:
   masar_postgres_data:
+  caddy_data:
+  caddy_config:
