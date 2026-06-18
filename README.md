@@ -127,6 +127,21 @@ npm install
 npm run dev
 ```
 
+## الفحوصات والاختبارات
+
+```bash
+cd backend
+python -m pip install -r requirements-dev.txt
+pytest -q
+```
+
+```bash
+cd frontend
+npm run lint
+npm run build
+npm audit --omit=dev
+```
+
 ## الحسابات التجريبية
 
 كل الحسابات تستخدم كلمة المرور:
