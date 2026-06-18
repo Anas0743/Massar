@@ -66,6 +66,10 @@ export const authAPI = {
       .then((res) => res.data),
   changePassword: (payload: { current_password: string; new_password: string }) =>
     api.post<{ message: string }>("/auth/change-password", payload).then((res) => res.data),
+  requestPasswordReset: (payload: { email: string }) =>
+    api.post<{ message: string }>("/auth/password-reset/request", payload).then((res) => res.data),
+  confirmPasswordReset: (payload: { token: string; new_password: string }) =>
+    api.post<{ message: string }>("/auth/password-reset/confirm", payload).then((res) => res.data),
 }
 
 export const publicAPI = {

@@ -1,3 +1,7 @@
+import logging
+from datetime import UTC, datetime, timedelta
+from urllib.parse import urlencode
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -6,13 +10,25 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_roles
 from app.core.rate_limit import rate_limit
-from app.core.security import create_access_token, get_password_hash, verify_password
-from app.models.entities import StudentProfile, User
+from app.core.security import create_access_token, create_url_safe_token, get_password_hash, hash_token, verify_password
+from app.models.entities import PasswordResetToken, StudentProfile, User
 from app.models.enums import UserRole
-from app.schemas.schemas import ChangePasswordRequest, LoginRequest, MeResponse, RegisterRequest, Token, UserRead
+from app.schemas.schemas import (
+    ChangePasswordRequest,
+    LoginRequest,
+    MeResponse,
+    PasswordResetConfirm,
+    PasswordResetRequest,
+    RegisterRequest,
+    Token,
+    UserRead,
+)
+from app.services.email import send_password_reset_email
 from app.services.serializers import serialize_expert, student_profile_or_none
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
+PASSWORD_RESET_RESPONSE = "If the email is registered, password reset instructions will be sent."
 
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
@@ -93,6 +109,73 @@ def change_password(
 
     current_user.password_hash = get_password_hash(payload.new_password)
     current_user.token_version += 1
+    db.commit()
+    return {"message": "Password updated successfully"}
+
+
+@router.post("/password-reset/request")
+def request_password_reset(
+    payload: PasswordResetRequest,
+    _: None = Depends(rate_limit(settings.PASSWORD_RESET_RATE_LIMIT, "auth:password-reset-request")),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    user = db.scalars(select(User).where(User.email == payload.email.lower())).first()
+    if not user or not user.is_active:
+        return {"message": PASSWORD_RESET_RESPONSE}
+
+    now = datetime.now(UTC)
+    existing_tokens = db.scalars(
+        select(PasswordResetToken).where(
+            PasswordResetToken.user_id == user.id,
+            PasswordResetToken.used_at.is_(None),
+        )
+    ).all()
+    for existing_token in existing_tokens:
+        existing_token.used_at = now
+
+    raw_token = create_url_safe_token()
+    db.add(
+        PasswordResetToken(
+            user_id=user.id,
+            token_hash=hash_token(raw_token),
+            expires_at=now + timedelta(minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES),
+        )
+    )
+    db.commit()
+
+    reset_url = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password?{urlencode({'token': raw_token})}"
+    if not send_password_reset_email(user.email, user.name, reset_url):
+        logger.warning("Password reset email was not sent for user_id=%s", user.id)
+
+    return {"message": PASSWORD_RESET_RESPONSE}
+
+
+@router.post("/password-reset/confirm")
+def confirm_password_reset(
+    payload: PasswordResetConfirm,
+    _: None = Depends(rate_limit(settings.PASSWORD_RESET_CONFIRM_RATE_LIMIT, "auth:password-reset-confirm")),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    now = datetime.now(UTC)
+    token_record = db.scalars(
+        select(PasswordResetToken).where(
+            PasswordResetToken.token_hash == hash_token(payload.token),
+            PasswordResetToken.used_at.is_(None),
+            PasswordResetToken.expires_at > now,
+        )
+    ).first()
+    if not token_record:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password reset link is invalid or expired")
+
+    user = db.get(User, token_record.user_id)
+    if not user or not user.is_active:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password reset link is invalid or expired")
+    if verify_password(payload.new_password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="New password must be different")
+
+    user.password_hash = get_password_hash(payload.new_password)
+    user.token_version += 1
+    token_record.used_at = now
     db.commit()
     return {"message": "Password updated successfully"}
 

@@ -38,11 +38,13 @@ const AboutPage = lazyPage(() => import("./pages/public/AboutPage"), "AboutPage"
 const ContactPage = lazyPage(() => import("./pages/public/ContactPage"), "ContactPage")
 const ExpertDetailsPage = lazyPage(() => import("./pages/public/ExpertDetailsPage"), "ExpertDetailsPage")
 const ExpertsPage = lazyPage(() => import("./pages/public/ExpertsPage"), "ExpertsPage")
+const ForgotPasswordPage = lazyPage(() => import("./pages/public/ForgotPasswordPage"), "ForgotPasswordPage")
 const HomePage = lazyPage(() => import("./pages/public/HomePage"), "HomePage")
 const LoginPage = lazyPage(() => import("./pages/public/LoginPage"), "LoginPage")
 const PrivacyPage = lazyPage(() => import("./pages/public/PrivacyPage"), "PrivacyPage")
 const RefundPolicyPage = lazyPage(() => import("./pages/public/RefundPolicyPage"), "RefundPolicyPage")
 const RegisterPage = lazyPage(() => import("./pages/public/RegisterPage"), "RegisterPage")
+const ResetPasswordPage = lazyPage(() => import("./pages/public/ResetPasswordPage"), "ResetPasswordPage")
 const SessionsPage = lazyPage(() => import("./pages/public/SessionsPage"), "SessionsPage")
 const TermsPage = lazyPage(() => import("./pages/public/TermsPage"), "TermsPage")
 const TracksPage = lazyPage(() => import("./pages/public/TracksPage"), "TracksPage")
@@ -92,6 +94,8 @@ function App() {
             <RouterRoute path="/terms" element={<TermsPage />} />
             <RouterRoute path="/refund-policy" element={<RefundPolicyPage />} />
             <RouterRoute path="/login" element={<LoginPage />} />
+            <RouterRoute path="/forgot-password" element={<ForgotPasswordPage />} />
+            <RouterRoute path="/reset-password" element={<ResetPasswordPage />} />
             <RouterRoute path="/register" element={<RegisterPage />} />
           </RouterRoute>
 

@@ -101,6 +101,11 @@ export function LoginPage() {
               <Field label="كلمة المرور" error={form.formState.errors.password?.message}>
                 <Input type="password" autoComplete="current-password" {...form.register("password")} />
               </Field>
+              <div className="text-left">
+                <Link to="/forgot-password" className="text-sm font-black text-primary-700">
+                  نسيت كلمة المرور؟
+                </Link>
+              </div>
             </div>
             <Button type="submit" className="mt-7 w-full" disabled={mutation.isPending}>
               {mutation.isPending ? "جاري الدخول..." : "دخول"}

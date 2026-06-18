@@ -74,6 +74,8 @@ cp .env.production.example .env.production
 - `DATABASE_URL`
 - `SECRET_KEY` بقيمة عشوائية قوية لا تقل عن 32 حرفًا
 - `BACKEND_CORS_ORIGINS` بدومين الواجهة الحقيقي
+- `FRONTEND_URL` بدومين المنصة الحقيقي حتى تصل روابط استعادة كلمة المرور إلى الواجهة الصحيحة
+- إعدادات البريد `MAIL_ENABLED`, `MAIL_FROM_EMAIL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`
 - `APP_DOMAIN` بدومين المنصة عند استخدام HTTPS عبر Caddy
 - إعدادات rate limiting مثل `LOGIN_RATE_LIMIT` و`PASSWORD_CHANGE_RATE_LIMIT` و`BOOKING_RATE_LIMIT`
 - قواعد الحجز والدفع مثل `BOOKING_CANCELLATION_CUTOFF_HOURS` و`REQUIRE_PAYMENT_BEFORE_CONFIRMATION`
@@ -158,7 +160,7 @@ Password123!
 
 ## أهم المسارات
 
-- Public: `/`, `/experts`, `/experts/:id`, `/tracks`, `/sessions`, `/about`, `/contact`, `/login`, `/register`
+- Public: `/`, `/experts`, `/experts/:id`, `/tracks`, `/sessions`, `/about`, `/contact`, `/login`, `/forgot-password`, `/reset-password`, `/register`
 - Legal: `/privacy`, `/terms`, `/refund-policy`
 - Student: `/dashboard`, `/dashboard/bookings`, `/dashboard/bookings/:id`, `/dashboard/profile`
 - Expert: `/expert/dashboard`, `/expert/bookings`, `/expert/availability`, `/expert/profile`, `/expert/session-notes/:bookingId`
@@ -166,7 +168,7 @@ Password123!
 
 ## API مختصر
 
-- Auth: `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password`
+- Auth: `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password`, `POST /auth/password-reset/request`, `POST /auth/password-reset/confirm`
 - Experts: `GET /experts`, `GET /experts/{id}`, `GET /experts/{id}/available-slots`, `PUT /experts/profile`, `GET /expert/bookings`
 - Bookings: `POST /bookings`, `GET /student/bookings`, `GET /bookings/{id}`, `PUT /bookings/{id}/status`
 - Notes & Reviews: `POST /bookings/{id}/session-note`, `POST /bookings/{id}/review`
@@ -183,6 +185,7 @@ Password123!
 - حذف المجالات وأنواع الجلسات من لوحة الأدمن يقوم بأرشفتها/تعطيلها بدل حذفها فعليًا، حفاظًا على البيانات القديمة.
 - توجد حماية rate limiting مبدئية داخل الذاكرة للمسارات الحساسة مع تنظيف دوري للمفاتيح القديمة. عند تشغيل أكثر من instance يجب نقلها إلى Redis أو مزود مركزي.
 - التسجيل العام مخصص للطلاب فقط.
+- استعادة كلمة المرور تستخدم روابط قصيرة العمر، وتخزن hash للتوكن فقط، وتعطل جلسات المستخدم القديمة بعد نجاح تغيير كلمة المرور. قبل الإطلاق الفعلي يجب تفعيل `MAIL_ENABLED=true` وضبط SMTP حقيقي.
 - حسابات الخبراء ينشئها الأدمن من `/admin/experts`، ويمكن تركها بانتظار المراجعة أو اعتمادها فورًا.
 - النصوص العربية بدأت من `frontend/src/i18n/ar.ts` مع بقاء بعض نصوص الصفحات داخل المكونات لتسهيل التطوير السريع، ويمكن فصلها لاحقًا بالكامل.
 - Dark Mode ليس مفعلًا في الواجهة بعد، لكن الألوان والـ Tailwind config يسمحان بإضافته لاحقًا بسهولة.
