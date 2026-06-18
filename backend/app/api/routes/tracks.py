@@ -67,5 +67,5 @@ def delete_track(
     track = db.get(Track, track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
-    db.delete(track)
+    track.is_active = False
     db.commit()

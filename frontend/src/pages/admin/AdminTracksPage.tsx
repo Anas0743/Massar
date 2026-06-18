@@ -21,7 +21,7 @@ export function AdminTracksPage() {
   const remove = useMutation({
     mutationFn: adminAPI.deleteTrack,
     onSuccess: () => {
-      toast.success("تم حذف المجال")
+      toast.success("تمت أرشفة المجال")
       void queryClient.invalidateQueries({ queryKey: ["admin-tracks"] })
     },
   })
@@ -68,7 +68,12 @@ export function AdminTracksPage() {
           <article key={track.id} className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="font-black">{track.name}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-black">{track.name}</h2>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-black ${track.is_active ? "bg-primary-50 text-primary-700" : "bg-slate-100 text-slate-500"}`}>
+                    {track.is_active ? "نشط" : "مؤرشف"}
+                  </span>
+                </div>
                 <p className="mt-1 text-sm text-slate-500">{track.slug}</p>
                 <p className="mt-2 text-sm leading-7 text-slate-600">{track.description}</p>
               </div>
@@ -76,9 +81,11 @@ export function AdminTracksPage() {
                 <Button variant="secondary" onClick={() => toggle.mutate({ id: track.id, is_active: !track.is_active })}>
                   {track.is_active ? "تعطيل" : "تفعيل"}
                 </Button>
-                <Button variant="danger" onClick={() => remove.mutate(track.id)}>
-                  حذف
-                </Button>
+                {track.is_active ? (
+                  <Button variant="danger" onClick={() => remove.mutate(track.id)}>
+                    أرشفة
+                  </Button>
+                ) : null}
               </div>
             </div>
           </article>

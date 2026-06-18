@@ -22,7 +22,7 @@ export function AdminSessionTypesPage() {
   const remove = useMutation({
     mutationFn: adminAPI.deleteSessionType,
     onSuccess: () => {
-      toast.success("تم حذف نوع الجلسة")
+      toast.success("تمت أرشفة نوع الجلسة")
       void queryClient.invalidateQueries({ queryKey: ["admin-session-types"] })
     },
   })
@@ -72,7 +72,12 @@ export function AdminSessionTypesPage() {
           <article key={session.id} className="rounded-3xl border border-black/10 bg-white/88 p-5 shadow-sm backdrop-blur transition hover:shadow-float">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="font-black">{session.name}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="font-black">{session.name}</h2>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-black ${session.is_active ? "bg-primary-50 text-primary-700" : "bg-slate-100 text-slate-500"}`}>
+                    {session.is_active ? "نشط" : "مؤرشف"}
+                  </span>
+                </div>
                 <p className="mt-1 text-sm text-slate-500">
                   {session.duration_minutes} دقيقة - {formatCurrency(session.base_price)}
                 </p>
@@ -82,9 +87,11 @@ export function AdminSessionTypesPage() {
                 <Button variant="secondary" onClick={() => toggle.mutate({ id: session.id, is_active: !session.is_active })}>
                   {session.is_active ? "تعطيل" : "تفعيل"}
                 </Button>
-                <Button variant="danger" onClick={() => remove.mutate(session.id)}>
-                  حذف
-                </Button>
+                {session.is_active ? (
+                  <Button variant="danger" onClick={() => remove.mutate(session.id)}>
+                    أرشفة
+                  </Button>
+                ) : null}
               </div>
             </div>
           </article>

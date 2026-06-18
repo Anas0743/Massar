@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     PASSWORD_CHANGE_RATE_LIMIT: str = "5/hour"
     CONTACT_RATE_LIMIT: str = "3/minute"
     BOOKING_RATE_LIMIT: str = "10/minute"
+    BOOKING_CANCELLATION_CUTOFF_HOURS: int = 6
+    REQUIRE_PAYMENT_BEFORE_CONFIRMATION: bool = True
+    PAYMENT_REFERENCE_REQUIRED: bool = True
     BACKEND_CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

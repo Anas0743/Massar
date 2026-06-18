@@ -31,7 +31,7 @@ def get_expert_tracks(db: Session, expert_id: int) -> list[TrackRead]:
     rows = db.scalars(
         select(Track)
         .join(expert_tracks, Track.id == expert_tracks.c.track_id)
-        .where(expert_tracks.c.expert_id == expert_id)
+        .where(expert_tracks.c.expert_id == expert_id, Track.is_active.is_(True))
         .order_by(Track.name)
     ).all()
     return [TrackRead.model_validate(row) for row in rows]
@@ -41,7 +41,7 @@ def get_expert_session_types(db: Session, expert_id: int) -> list[SessionTypeRea
     rows = db.execute(
         select(SessionType, expert_session_types.c.custom_price)
         .join(expert_session_types, SessionType.id == expert_session_types.c.session_type_id)
-        .where(expert_session_types.c.expert_id == expert_id)
+        .where(expert_session_types.c.expert_id == expert_id, SessionType.is_active.is_(True))
         .order_by(SessionType.name)
     ).all()
 

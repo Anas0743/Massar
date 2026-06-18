@@ -2,15 +2,33 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.deps import require_roles
 from app.core.security import get_password_hash
 from app.models.entities import Booking, ExpertProfile, Payment, Review, User
-from app.models.enums import BookingStatus, UserRole
+from app.models.enums import BookingStatus, PaymentStatus, UserRole
 from app.schemas.schemas import AdminExpertCreate, AdminStats, BookingRead, ExpertRead, PaymentStatusUpdate, UserRead
 from app.services.serializers import serialize_booking, serialize_expert
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+def validate_payment_update(booking: Booking, payload: PaymentStatusUpdate) -> None:
+    if settings.PAYMENT_REFERENCE_REQUIRED and payload.status in {PaymentStatus.PAID, PaymentStatus.REFUNDED}:
+        if not payload.transaction_reference or not payload.transaction_reference.strip():
+            raise HTTPException(status_code=400, detail="Transaction reference is required for paid or refunded payments.")
+
+    if payload.status == PaymentStatus.UNPAID and booking.status in {BookingStatus.CONFIRMED, BookingStatus.COMPLETED}:
+        raise HTTPException(
+            status_code=400,
+            detail="Confirmed or completed bookings cannot be marked unpaid. Update the booking status first.",
+        )
+
+    if payload.status == PaymentStatus.REFUNDED and (
+        booking.payment is None or booking.payment.status != PaymentStatus.PAID
+    ):
+        raise HTTPException(status_code=400, detail="Only paid payments can be refunded.")
 
 
 @router.get("/stats", response_model=AdminStats)
@@ -167,13 +185,15 @@ def update_payment_status(
     booking = db.get(Booking, booking_id)
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
+    validate_payment_update(booking, payload)
+
     payment = db.scalars(select(Payment).where(Payment.booking_id == booking.id)).first()
     if not payment:
         payment = Payment(booking_id=booking.id, amount=booking.price, currency="JOD")
         db.add(payment)
     payment.status = payload.status
     if payload.transaction_reference is not None:
-        payment.transaction_reference = payload.transaction_reference
+        payment.transaction_reference = payload.transaction_reference.strip() or None
     db.commit()
     db.refresh(booking)
     return serialize_booking(db, booking)

@@ -3,12 +3,16 @@ import { Link } from "react-router-dom"
 import { toast } from "sonner"
 import { EmptyState } from "../../components/EmptyState"
 import { LoadingState } from "../../components/LoadingState"
-import { BookingStatusBadge } from "../../components/StatusBadge"
+import { BookingStatusBadge, PaymentStatusBadge } from "../../components/StatusBadge"
 import { Button } from "../../components/ui/Button"
 import { Input } from "../../components/ui/Field"
 import { formatCurrency, formatDateTime } from "../../lib/utils"
 import { expertAPI } from "../../services/api"
 import type { BookingStatus } from "../../types/models"
+
+function hasSessionEnded(scheduledAt: string, durationMinutes: number) {
+  return Date.now() >= new Date(scheduledAt).getTime() + durationMinutes * 60_000
+}
 
 export function ExpertBookingsPage() {
   const queryClient = useQueryClient()
@@ -45,7 +49,10 @@ export function ExpertBookingsPage() {
               <div className="masar-progress -mx-5 -mt-5 mb-5 h-1" />
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <BookingStatusBadge status={booking.status} />
+                  <div className="flex flex-wrap gap-2">
+                    <BookingStatusBadge status={booking.status} />
+                    {booking.payment ? <PaymentStatusBadge status={booking.payment.status} /> : null}
+                  </div>
                   <h2 className="mt-3 text-xl font-black">{booking.student_name}</h2>
                   <p className="mt-2 text-sm text-slate-600">
                     {booking.session_type_name} - {formatDateTime(booking.scheduled_at)}
@@ -55,18 +62,34 @@ export function ExpertBookingsPage() {
                 </div>
                 <div className="grid min-w-72 gap-3">
                   {booking.status === "pending" ? (
-                    <div className="flex gap-2">
-                      <Button className="flex-1" variant="success" onClick={() => status.mutate({ id: booking.id, next: "confirmed" })}>
-                        قبول
-                      </Button>
-                      <Button className="flex-1" variant="danger" onClick={() => status.mutate({ id: booking.id, next: "rejected" })}>
-                        رفض
-                      </Button>
-                    </div>
+                    <>
+                      {booking.payment?.status !== "paid" ? (
+                        <p className="rounded-3xl bg-amber-50 p-3 text-xs font-bold leading-6 text-amber-700">
+                          بانتظار تأكيد الدفع من الإدارة قبل قبول الحجز.
+                        </p>
+                      ) : null}
+                      <div className="flex gap-2">
+                        <Button
+                          className="flex-1"
+                          variant="success"
+                          onClick={() => status.mutate({ id: booking.id, next: "confirmed" })}
+                          disabled={booking.payment?.status !== "paid" || status.isPending}
+                        >
+                          قبول
+                        </Button>
+                        <Button className="flex-1" variant="danger" onClick={() => status.mutate({ id: booking.id, next: "rejected" })} disabled={status.isPending}>
+                          رفض
+                        </Button>
+                      </div>
+                    </>
                   ) : null}
                   {booking.status === "confirmed" ? (
-                    <Button variant="secondary" onClick={() => status.mutate({ id: booking.id, next: "completed" })}>
-                      وضعها مكتملة
+                    <Button
+                      variant="secondary"
+                      onClick={() => status.mutate({ id: booking.id, next: "completed" })}
+                      disabled={!hasSessionEnded(booking.scheduled_at, booking.duration_minutes) || status.isPending}
+                    >
+                      {hasSessionEnded(booking.scheduled_at, booking.duration_minutes) ? "وضعها مكتملة" : "تكتمل بعد موعد الجلسة"}
                     </Button>
                   ) : null}
                   <form
@@ -82,7 +105,7 @@ export function ExpertBookingsPage() {
                       حفظ
                     </Button>
                   </form>
-                  {["confirmed", "completed"].includes(booking.status) ? (
+                  {(booking.status === "completed" || (booking.status === "confirmed" && hasSessionEnded(booking.scheduled_at, booking.duration_minutes))) ? (
                     <Link className="masar-gradient rounded-full px-4 py-3 text-center text-sm font-black text-white shadow-sm" to={`/expert/session-notes/${booking.id}`}>
                       ملخص الجلسة
                     </Link>

@@ -147,6 +147,8 @@ export const adminAPI = {
   }) => api.post<Expert>("/admin/experts", payload).then((res) => res.data),
   bookings: (params?: { status?: BookingStatus; expert_id?: number; student_id?: number }) =>
     api.get<Booking[]>("/admin/bookings", { params }).then((res) => res.data),
+  updateBookingStatus: (id: number, status: BookingStatus, expert_message?: string) =>
+    api.put<Booking>(`/bookings/${id}/status`, { status, expert_message }).then((res) => res.data),
   updatePaymentStatus: (id: number, status: PaymentStatus, transaction_reference?: string) =>
     api.put<Booking>(`/admin/bookings/${id}/payment-status`, { status, transaction_reference }).then((res) => res.data),
   tracks: () => api.get<Track[]>("/admin/tracks").then((res) => res.data),

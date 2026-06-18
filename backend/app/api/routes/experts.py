@@ -39,18 +39,20 @@ def apply_expert_profile_update(db: Session, user: User, payload: ExpertProfileU
 
     if track_ids is not None:
         if track_ids:
-            existing_tracks = db.scalars(select(Track.id).where(Track.id.in_(track_ids))).all()
+            existing_tracks = db.scalars(select(Track.id).where(Track.id.in_(track_ids), Track.is_active.is_(True))).all()
             if len(existing_tracks) != len(set(track_ids)):
-                raise HTTPException(status_code=400, detail="One or more tracks do not exist")
+                raise HTTPException(status_code=400, detail="One or more tracks do not exist or are inactive")
         db.execute(delete(expert_tracks).where(expert_tracks.c.expert_id == user.id))
         for track_id in track_ids:
             db.execute(insert(expert_tracks).values(expert_id=user.id, track_id=track_id))
 
     if session_type_ids is not None:
         if session_type_ids:
-            existing_sessions = db.scalars(select(SessionType.id).where(SessionType.id.in_(session_type_ids))).all()
+            existing_sessions = db.scalars(
+                select(SessionType.id).where(SessionType.id.in_(session_type_ids), SessionType.is_active.is_(True))
+            ).all()
             if len(existing_sessions) != len(set(session_type_ids)):
-                raise HTTPException(status_code=400, detail="One or more session types do not exist")
+                raise HTTPException(status_code=400, detail="One or more session types do not exist or are inactive")
         db.execute(delete(expert_session_types).where(expert_session_types.c.expert_id == user.id))
         for session_type_id in session_type_ids:
             db.execute(insert(expert_session_types).values(expert_id=user.id, session_type_id=session_type_id))
@@ -96,7 +98,7 @@ def list_experts(
         statement = (
             statement.join(expert_tracks, expert_tracks.c.expert_id == User.id)
             .join(Track, Track.id == expert_tracks.c.track_id)
-            .where(Track.slug == track)
+            .where(Track.slug == track, Track.is_active.is_(True))
         )
 
     users = db.scalars(statement.distinct().order_by(ExpertProfile.rating_average.desc(), User.name)).all()

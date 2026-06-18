@@ -318,14 +318,15 @@ def seed() -> None:
             db.flush()
 
             for booking in bookings:
+                is_paid_booking = booking.status in {BookingStatus.CONFIRMED, BookingStatus.COMPLETED}
                 db.add(
                     Payment(
                         booking_id=booking.id,
                         amount=booking.price,
                         currency="JOD",
-                        status=PaymentStatus.PAID if booking.status == BookingStatus.COMPLETED else PaymentStatus.UNPAID,
+                        status=PaymentStatus.PAID if is_paid_booking else PaymentStatus.UNPAID,
                         payment_method=PaymentMethod.MANUAL,
-                        transaction_reference="manual-seed" if booking.status == BookingStatus.COMPLETED else None,
+                        transaction_reference=f"manual-seed-{booking.id}" if is_paid_booking else None,
                     )
                 )
 

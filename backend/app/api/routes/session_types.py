@@ -67,5 +67,5 @@ def delete_session_type(
     session_type = db.get(SessionType, session_type_id)
     if not session_type:
         raise HTTPException(status_code=404, detail="Session type not found")
-    db.delete(session_type)
+    session_type.is_active = False
     db.commit()

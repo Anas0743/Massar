@@ -75,6 +75,7 @@ cp .env.production.example .env.production
 - `SECRET_KEY` بقيمة عشوائية قوية لا تقل عن 32 حرفًا
 - `BACKEND_CORS_ORIGINS` بدومين الواجهة الحقيقي
 - إعدادات rate limiting مثل `LOGIN_RATE_LIMIT` و`PASSWORD_CHANGE_RATE_LIMIT` و`BOOKING_RATE_LIMIT`
+- قواعد الحجز والدفع مثل `BOOKING_CANCELLATION_CUTOFF_HOURS` و`REQUIRE_PAYMENT_BEFORE_CONFIRMATION`
 - `ADMIN_EMAIL` و`ADMIN_PASSWORD` لإنشاء أول أدمن
 
 3. شغل الخدمات:
@@ -144,6 +145,11 @@ Password123!
 ## ملاحظات تشغيلية
 
 - الدفع يدوي عبر `payments.status` و`payment_method=manual` مع قابلية الربط لاحقًا بمزود دفع.
+- عند تفعيل `REQUIRE_PAYMENT_BEFORE_CONFIRMATION` لا يمكن تأكيد أو إكمال الحجز قبل أن يضع الأدمن الدفع كـ `paid`.
+- تغيير الدفع إلى `paid` أو `refunded` يتطلب مرجع دفع إذا كان `PAYMENT_REFERENCE_REQUIRED=true`.
+- الطالب يستطيع إلغاء الحجز قبل الموعد بعدد الساعات المحدد في `BOOKING_CANCELLATION_CUTOFF_HOURS`.
+- لا يمكن إكمال الجلسة أو إضافة ملخصها قبل انتهاء وقتها المجدول.
+- حذف المجالات وأنواع الجلسات من لوحة الأدمن يقوم بأرشفتها/تعطيلها بدل حذفها فعليًا، حفاظًا على البيانات القديمة.
 - توجد حماية rate limiting مبدئية داخل الذاكرة للمسارات الحساسة. عند تشغيل أكثر من instance يجب نقلها إلى Redis أو مزود مركزي.
 - التسجيل العام مخصص للطلاب فقط.
 - حسابات الخبراء ينشئها الأدمن من `/admin/experts`، ويمكن تركها بانتظار المراجعة أو اعتمادها فورًا.

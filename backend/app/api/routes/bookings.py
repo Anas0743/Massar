@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -26,6 +26,24 @@ from app.services.serializers import recalculate_expert_rating, serialize_bookin
 router = APIRouter(tags=["bookings"])
 
 
+def utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
+def normalized_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
+
+
+def booking_ends_at(booking: Booking) -> datetime:
+    return normalized_utc(booking.scheduled_at) + timedelta(minutes=booking.duration_minutes)
+
+
+def booking_is_paid(booking: Booking) -> bool:
+    return booking.payment is not None and booking.payment.status == PaymentStatus.PAID
+
+
 def get_booking_or_404(db: Session, booking_id: int) -> Booking:
     booking = db.get(Booking, booking_id)
     if not booking:
@@ -41,6 +59,73 @@ def ensure_booking_access(user: User, booking: Booking) -> None:
     if user.role == UserRole.EXPERT and booking.expert_id == user.id:
         return
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You cannot access this booking")
+
+
+def ensure_booking_can_be_cancelled_by_student(booking: Booking) -> None:
+    if booking.status not in {BookingStatus.PENDING, BookingStatus.CONFIRMED}:
+        raise HTTPException(status_code=400, detail="This booking cannot be cancelled")
+
+    cutoff_at = normalized_utc(booking.scheduled_at) - timedelta(hours=settings.BOOKING_CANCELLATION_CUTOFF_HOURS)
+    if utc_now() >= cutoff_at:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Bookings can only be cancelled at least {settings.BOOKING_CANCELLATION_CUTOFF_HOURS} hours before the session.",
+        )
+
+
+def ensure_paid_if_required(booking: Booking, next_status: BookingStatus) -> None:
+    if not settings.REQUIRE_PAYMENT_BEFORE_CONFIRMATION:
+        return
+    if next_status not in {BookingStatus.CONFIRMED, BookingStatus.COMPLETED}:
+        return
+    if not booking_is_paid(booking):
+        raise HTTPException(status_code=400, detail="Payment must be marked as paid before confirming or completing this booking.")
+
+
+def ensure_session_has_ended(booking: Booking) -> None:
+    if utc_now() < booking_ends_at(booking):
+        raise HTTPException(status_code=400, detail="This booking cannot be completed before the scheduled session ends.")
+
+
+def ensure_booking_status_transition(booking: Booking, next_status: BookingStatus, actor: User) -> None:
+    if next_status == booking.status:
+        return
+
+    if actor.role == UserRole.STUDENT:
+        if next_status != BookingStatus.CANCELLED:
+            raise HTTPException(status_code=403, detail="Students can only cancel their own bookings")
+        ensure_booking_can_be_cancelled_by_student(booking)
+        return
+
+    if actor.role == UserRole.EXPERT:
+        allowed = {
+            BookingStatus.PENDING: {BookingStatus.CONFIRMED, BookingStatus.REJECTED},
+            BookingStatus.CONFIRMED: {BookingStatus.COMPLETED, BookingStatus.CANCELLED},
+        }
+        if next_status not in allowed.get(booking.status, set()):
+            raise HTTPException(status_code=400, detail="Invalid status transition for expert")
+        ensure_paid_if_required(booking, next_status)
+        if next_status == BookingStatus.COMPLETED:
+            ensure_session_has_ended(booking)
+        if next_status == BookingStatus.CANCELLED and utc_now() >= normalized_utc(booking.scheduled_at):
+            raise HTTPException(status_code=400, detail="Confirmed bookings can only be cancelled before the session starts.")
+        return
+
+    if actor.role == UserRole.ADMIN:
+        allowed = {
+            BookingStatus.PENDING: {BookingStatus.CONFIRMED, BookingStatus.REJECTED, BookingStatus.CANCELLED},
+            BookingStatus.CONFIRMED: {BookingStatus.COMPLETED, BookingStatus.CANCELLED},
+            BookingStatus.REJECTED: {BookingStatus.PENDING},
+            BookingStatus.CANCELLED: {BookingStatus.PENDING},
+        }
+        if next_status not in allowed.get(booking.status, set()):
+            raise HTTPException(status_code=400, detail="Invalid booking status transition")
+        ensure_paid_if_required(booking, next_status)
+        if next_status == BookingStatus.COMPLETED:
+            ensure_session_has_ended(booking)
+        return
+
+    raise HTTPException(status_code=403, detail="You cannot update this booking")
 
 
 @router.post("/bookings", response_model=BookingRead, status_code=status.HTTP_201_CREATED)
@@ -64,7 +149,7 @@ def create_booking(
     if scheduled_at.tzinfo is None:
         raise HTTPException(status_code=400, detail="Booking time must include a timezone")
     scheduled_at = scheduled_at.astimezone(UTC)
-    now = datetime.now(UTC)
+    now = utc_now()
     if scheduled_at < now:
         raise HTTPException(status_code=400, detail="Cannot book a session in the past")
 
@@ -154,22 +239,7 @@ def update_booking_status(
 ) -> BookingRead:
     booking = get_booking_or_404(db, booking_id)
     ensure_booking_access(current_user, booking)
-
-    if current_user.role == UserRole.STUDENT:
-        if booking.student_id != current_user.id or payload.status != BookingStatus.CANCELLED:
-            raise HTTPException(status_code=403, detail="Students can only cancel their own bookings")
-        if booking.status not in {BookingStatus.PENDING, BookingStatus.CONFIRMED}:
-            raise HTTPException(status_code=400, detail="This booking cannot be cancelled")
-
-    if current_user.role == UserRole.EXPERT:
-        if booking.expert_id != current_user.id:
-            raise HTTPException(status_code=403, detail="You cannot update this booking")
-        allowed = {
-            BookingStatus.PENDING: {BookingStatus.CONFIRMED, BookingStatus.REJECTED},
-            BookingStatus.CONFIRMED: {BookingStatus.COMPLETED, BookingStatus.CANCELLED},
-        }
-        if payload.status not in allowed.get(booking.status, set()):
-            raise HTTPException(status_code=400, detail="Invalid status transition for expert")
+    ensure_booking_status_transition(booking, payload.status, current_user)
 
     booking.status = payload.status
     if payload.expert_message is not None:
@@ -207,6 +277,9 @@ def upsert_session_note(
     if current_user.role not in {UserRole.EXPERT, UserRole.ADMIN}:
         raise HTTPException(status_code=403, detail="Only experts and admins can add session notes")
     ensure_booking_access(current_user, booking)
+    if booking.status not in {BookingStatus.CONFIRMED, BookingStatus.COMPLETED}:
+        raise HTTPException(status_code=400, detail="Session notes are available only for confirmed or completed bookings")
+    ensure_session_has_ended(booking)
 
     note = db.scalars(select(SessionNote).where(SessionNote.booking_id == booking.id)).first()
     if note:
@@ -217,6 +290,7 @@ def upsert_session_note(
         db.add(note)
 
     if booking.status == BookingStatus.CONFIRMED:
+        ensure_paid_if_required(booking, BookingStatus.COMPLETED)
         booking.status = BookingStatus.COMPLETED
     db.commit()
     db.refresh(note)

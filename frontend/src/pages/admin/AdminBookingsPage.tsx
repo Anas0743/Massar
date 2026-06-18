@@ -2,27 +2,31 @@
 import { toast } from "sonner"
 import { LoadingState } from "../../components/LoadingState"
 import { BookingStatusBadge, PaymentStatusBadge } from "../../components/StatusBadge"
-import { Select } from "../../components/ui/Field"
+import { Button } from "../../components/ui/Button"
+import { Input, Select } from "../../components/ui/Field"
 import { formatCurrency, formatDateTime } from "../../lib/utils"
-import { adminAPI, expertAPI } from "../../services/api"
+import { adminAPI } from "../../services/api"
 import type { BookingStatus, PaymentStatus } from "../../types/models"
 
 export function AdminBookingsPage() {
   const queryClient = useQueryClient()
   const bookings = useQuery({ queryKey: ["admin-bookings"], queryFn: () => adminAPI.bookings() })
   const status = useMutation({
-    mutationFn: ({ id, next }: { id: number; next: BookingStatus }) => expertAPI.updateStatus(id, next),
+    mutationFn: ({ id, next }: { id: number; next: BookingStatus }) => adminAPI.updateBookingStatus(id, next),
     onSuccess: () => {
       toast.success("تم تحديث حالة الحجز")
       void queryClient.invalidateQueries({ queryKey: ["admin-bookings"] })
     },
+    onError: () => toast.error("تعذر تحديث حالة الحجز. تحقق من الدفع أو وقت الجلسة."),
   })
   const payment = useMutation({
-    mutationFn: ({ id, next }: { id: number; next: PaymentStatus }) => adminAPI.updatePaymentStatus(id, next),
+    mutationFn: ({ id, next, reference }: { id: number; next: PaymentStatus; reference?: string }) =>
+      adminAPI.updatePaymentStatus(id, next, reference),
     onSuccess: () => {
       toast.success("تم تحديث حالة الدفع")
       void queryClient.invalidateQueries({ queryKey: ["admin-bookings"] })
     },
+    onError: () => toast.error("تعذر تحديث الدفع. مرجع الدفع مطلوب للحالات المدفوعة أو المستردة."),
   })
 
   if (bookings.isLoading) return <LoadingState />
@@ -49,19 +53,39 @@ export function AdminBookingsPage() {
                 </p>
                 <p className="mt-1 text-sm text-slate-500">{formatDateTime(booking.scheduled_at)} - {formatCurrency(booking.price)}</p>
               </div>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-3 xl:min-w-[420px]">
                 <Select value={booking.status} onChange={(event) => status.mutate({ id: booking.id, next: event.target.value as BookingStatus })}>
-                  <option value="pending">pending</option>
-                  <option value="confirmed">confirmed</option>
-                  <option value="completed">completed</option>
-                  <option value="cancelled">cancelled</option>
-                  <option value="rejected">rejected</option>
+                  <option value="pending">بانتظار المراجعة</option>
+                  <option value="confirmed">مؤكد</option>
+                  <option value="completed">مكتمل</option>
+                  <option value="cancelled">ملغى</option>
+                  <option value="rejected">مرفوض</option>
                 </Select>
-                <Select value={booking.payment?.status || "unpaid"} onChange={(event) => payment.mutate({ id: booking.id, next: event.target.value as PaymentStatus })}>
-                  <option value="unpaid">unpaid</option>
-                  <option value="paid">paid</option>
-                  <option value="refunded">refunded</option>
-                </Select>
+                <form
+                  className="grid gap-2 sm:grid-cols-[150px_1fr_auto]"
+                  onSubmit={(event) => {
+                    event.preventDefault()
+                    const formData = new FormData(event.currentTarget)
+                    payment.mutate({
+                      id: booking.id,
+                      next: String(formData.get("payment_status")) as PaymentStatus,
+                      reference: String(formData.get("transaction_reference") || "").trim(),
+                    })
+                  }}
+                >
+                  <Select name="payment_status" defaultValue={booking.payment?.status || "unpaid"}>
+                    <option value="unpaid">غير مدفوع</option>
+                    <option value="paid">مدفوع</option>
+                    <option value="refunded">مسترد</option>
+                  </Select>
+                  <Input name="transaction_reference" defaultValue={booking.payment?.transaction_reference || ""} placeholder="مرجع الدفع" />
+                  <Button type="submit" variant="secondary" disabled={payment.isPending}>
+                    حفظ
+                  </Button>
+                </form>
+                {booking.status === "pending" && booking.payment?.status !== "paid" ? (
+                  <p className="text-xs font-bold leading-6 text-amber-700">يجب تأكيد الدفع قبل تحويل الحجز إلى مؤكد.</p>
+                ) : null}
               </div>
             </div>
           </article>
